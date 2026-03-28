@@ -10,8 +10,8 @@ describe('Property 14 — Filter controls produce matching query parameters', ()
         fc.record({
           cropType: fc.option(fc.string({ minLength: 1 }), { nil: undefined }),
           location:  fc.option(fc.string({ minLength: 1 }), { nil: undefined }),
-          minPrice:  fc.option(fc.float({ min: 0, max: 1000 }), { nil: undefined }),
-          maxPrice:  fc.option(fc.float({ min: 0, max: 10000 }), { nil: undefined }),
+          minPrice:  fc.option(fc.float({ min: Math.fround(0), max: Math.fround(1000) }).filter(n => !Number.isNaN(n)), { nil: undefined }),
+          maxPrice:  fc.option(fc.float({ min: Math.fround(0), max: Math.fround(10000) }).filter(n => !Number.isNaN(n)), { nil: undefined }),
         }),
         (filters) => {
           // Simulate the query params builder in BrowseListingsPage

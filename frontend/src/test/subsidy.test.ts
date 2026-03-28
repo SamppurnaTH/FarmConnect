@@ -43,8 +43,8 @@ describe('Property 19 — Remaining budget computed correctly', () => {
   it('remaining = budgetAmount - totalDisbursed for any program', () => {
     fc.assert(
       fc.property(
-        fc.float({ min: 0, max: 1_000_000 }),
-        fc.float({ min: 0, max: 1_000_000 }),
+        fc.float({ min: Math.fround(0), max: Math.fround(1_000_000) }).filter(n => !Number.isNaN(n)),
+        fc.float({ min: Math.fround(0), max: Math.fround(1_000_000) }).filter(n => !Number.isNaN(n)),
         (budgetAmount, totalDisbursed) => {
           const remaining = budgetAmount - totalDisbursed;
           // The displayed remaining budget should equal budgetAmount - totalDisbursed
