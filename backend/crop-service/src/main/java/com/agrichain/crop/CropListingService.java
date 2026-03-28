@@ -50,13 +50,15 @@ public class CropListingService {
 
     private void verifyFarmerIsActive(UUID farmerId) {
         try {
-            @SuppressWarnings("unchecked")
-            Map<String, String> response = restTemplate.getForObject(
-                    farmerServiceUrl + "/farmers/" + farmerId + "/status", Map.class);
-            String status = (response != null) ? response.get("status") : "NOT_FOUND";
+            String status = restTemplate.getForObject(
+                    farmerServiceUrl + "/farmers/" + farmerId + "/status", String.class);
+            // Response is a JSON string like "Active" — strip quotes if present
+            if (status != null) status = status.replace("\"", "").trim();
             if (!"Active".equalsIgnoreCase(status)) {
                 throw new IllegalStateException("Only active and verified farmers can list crops.");
             }
+        } catch (IllegalStateException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Failed to verify farmer status: " + e.getMessage(), e);
         }

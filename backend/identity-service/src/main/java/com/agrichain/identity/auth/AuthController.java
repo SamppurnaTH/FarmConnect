@@ -85,6 +85,12 @@ public class AuthController {
                 .body(Map.of("error", InvalidTokenException.INVALID_TOKEN_MESSAGE));
     }
 
+    @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
+    public ResponseEntity<Map<String, String>> handleDuplicate(org.springframework.dao.DataIntegrityViolationException ex) {
+        return ResponseEntity.status(409)
+                .body(Map.of("error", "Username or email already registered"));
+    }
+
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     private String extractBearer(String authHeader) {

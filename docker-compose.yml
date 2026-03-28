@@ -19,7 +19,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./agri-chain/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U agrichain"]
@@ -30,7 +30,7 @@ services:
   identity-service:
     <<: *service-defaults
     build:
-      context: ./agri-chain
+      context: ./backend
       args:
         MODULE_NAME: identity-service
     container_name: krishisetu-identity
@@ -45,7 +45,7 @@ services:
   farmer-service:
     <<: *service-defaults
     build:
-      context: ./agri-chain
+      context: ./backend
       args:
         MODULE_NAME: farmer-service
     container_name: krishisetu-farmer
@@ -60,7 +60,7 @@ services:
   crop-service:
     <<: *service-defaults
     build:
-      context: ./agri-chain
+      context: ./backend
       args:
         MODULE_NAME: crop-service
     container_name: krishisetu-crop
@@ -76,7 +76,7 @@ services:
   transaction-service:
     <<: *service-defaults
     build:
-      context: ./agri-chain
+      context: ./backend
       args:
         MODULE_NAME: transaction-service
     container_name: krishisetu-transaction
@@ -93,7 +93,7 @@ services:
   subsidy-service:
     <<: *service-defaults
     build:
-      context: ./agri-chain
+      context: ./backend
       args:
         MODULE_NAME: subsidy-service
     container_name: krishisetu-subsidy
@@ -110,7 +110,7 @@ services:
   compliance-service:
     <<: *service-defaults
     build:
-      context: ./agri-chain
+      context: ./backend
       args:
         MODULE_NAME: compliance-service
     container_name: krishisetu-compliance
@@ -128,7 +128,7 @@ services:
   reporting-service:
     <<: *service-defaults
     build:
-      context: ./agri-chain
+      context: ./backend
       args:
         MODULE_NAME: reporting-service
     container_name: krishisetu-reporting
@@ -148,7 +148,7 @@ services:
   notification-service:
     <<: *service-defaults
     build:
-      context: ./agri-chain
+      context: ./backend
       args:
         MODULE_NAME: notification-service
     container_name: krishisetu-notification
@@ -163,7 +163,7 @@ services:
   trader-service:
     <<: *service-defaults
     build:
-      context: ./agri-chain
+      context: ./backend
       args:
         MODULE_NAME: trader-service
     container_name: krishisetu-trader

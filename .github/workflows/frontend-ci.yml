@@ -12,11 +12,14 @@ on:
 
 env:
   REGISTRY: ghcr.io
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   test:
     name: Frontend Lint and Test
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     defaults:
       run:
         working-directory: ./agri-chain-frontend
@@ -41,10 +44,13 @@ jobs:
         run: npx vitest run
 
   build-push:
-    name: Build & Push GHCR
+    name: Build & Push GHCR (frontend)
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: test
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
@@ -64,10 +70,12 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and Push Static Server Image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./agri-chain-frontend
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LC }}:${{ github.sha }}, ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LC }}:latest
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LC }}:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LC }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max

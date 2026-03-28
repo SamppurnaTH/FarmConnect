@@ -56,7 +56,7 @@ The ecosystem comprises 9 specialized Spring Boot microservices, coordinated via
 1. **Cloud-Native Packaging**:
    Assemble the microservice binaries using Maven:
    ```bash
-   cd agri-chain
+   cd backend
    mvn clean package -DskipTests
    cd ..
    ```
