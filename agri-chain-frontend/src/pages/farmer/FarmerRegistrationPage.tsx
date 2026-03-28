@@ -10,6 +10,9 @@ import { useIsOnline } from '../../components/ConnectivityBanner';
 import type { ApiErrorResponse } from '../../types';
 
 const schema = z.object({
+  username:    z.string().min(3, 'Username must be at least 3 characters'),
+  email:       z.string().email('Invalid email address'),
+  password:    z.string().min(8, 'Password must be at least 8 characters'),
   name:        z.string().min(2, 'Full name is required'),
   dateOfBirth: z.string().min(1, 'Date of birth is required'),
   gender:      z.string().min(1, 'Gender is required'),
@@ -43,7 +46,7 @@ const FarmerRegistrationPage: React.FC = () => {
     } catch (err: unknown) {
       const apiErr = (err as { response?: { data?: ApiErrorResponse; status?: number } })?.response;
       if (apiErr?.status === 409) {
-        setServerError('This contact information is already registered. Please use a different contact.');
+        setServerError('This username or contact information is already registered. Please use different credentials.');
       } else if (apiErr?.data?.fields) {
         apiErr.data.fields.forEach((f) => {
           setError(f.field as keyof FormData, { message: f.message });
@@ -64,7 +67,7 @@ const FarmerRegistrationPage: React.FC = () => {
           <CheckCircle className="w-16 h-16 text-primary-500 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Registration Submitted</h2>
           <p className="text-gray-600 mb-6">
-            Your registration is <strong>pending verification</strong>. A Market Officer will review your documents. You'll receive a notification once your account is activated.
+            Your account has been created and is <strong>pending verification</strong>. A Market Officer will review your profile. You'll receive a notification once activated.
           </p>
           <Link to="/login" className="btn-primary">Back to Login</Link>
         </div>
@@ -90,38 +93,123 @@ const FarmerRegistrationPage: React.FC = () => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
-            {([
-              ['name',        'Full Name',          'text',   'name'],
-              ['dateOfBirth', 'Date of Birth',       'date',   undefined],
-              ['address',     'Address',             'text',   'street-address'],
-              ['contactInfo', 'Contact Info (phone/email)', 'text', 'tel'],
-              ['landDetails', 'Land Details',        'text',   undefined],
-            ] as [keyof FormData, string, string, string | undefined][]).map(([field, label, type, autoComplete]) => (
-              <div key={field}>
-                <label htmlFor={field} className="block text-sm font-medium text-gray-700 mb-1">
-                  {label}
-                </label>
-                <input
-                  id={field}
-                  type={type}
-                  autoComplete={autoComplete}
-                  className={`input-field ${errors[field] ? 'border-red-400' : ''}`}
-                  {...register(field)}
-                />
-                <FieldError message={errors[field]?.message} />
+          <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6">
+            {/* --- Account Credentials Section --- */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Account Credentials</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                  <input
+                    id="username"
+                    type="text"
+                    autoComplete="username"
+                    className={`input-field ${errors.username ? 'border-red-400' : ''}`}
+                    {...register('username')}
+                  />
+                  <FieldError message={errors.username?.message} />
+                </div>
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <input
+                    id="email"
+                    type="email"
+                    autoComplete="email"
+                    className={`input-field ${errors.email ? 'border-red-400' : ''}`}
+                    {...register('email')}
+                  />
+                  <FieldError message={errors.email?.message} />
+                </div>
               </div>
-            ))}
 
-            <div>
-              <label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
-              <select id="gender" className={`input-field ${errors.gender ? 'border-red-400' : ''}`} {...register('gender')}>
-                <option value="">Select gender</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
-              </select>
-              <FieldError message={errors.gender?.message} />
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                <input
+                  id="password"
+                  type="password"
+                  autoComplete="new-password"
+                  className={`input-field ${errors.password ? 'border-red-400' : ''}`}
+                  {...register('password')}
+                />
+                <FieldError message={errors.password?.message} />
+              </div>
+            </div>
+
+            <hr className="border-gray-100" />
+
+            {/* --- Farmer Profile Section --- */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Farmer Profile</h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                  <input
+                    id="name"
+                    type="text"
+                    autoComplete="name"
+                    className={`input-field ${errors.name ? 'border-red-400' : ''}`}
+                    {...register('name')}
+                  />
+                  <FieldError message={errors.name?.message} />
+                </div>
+                <div>
+                  <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
+                  <input
+                    id="dateOfBirth"
+                    type="date"
+                    className={`input-field ${errors.dateOfBirth ? 'border-red-400' : ''}`}
+                    {...register('dateOfBirth')}
+                  />
+                  <FieldError message={errors.dateOfBirth?.message} />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+                <select id="gender" className={`input-field ${errors.gender ? 'border-red-400' : ''}`} {...register('gender')}>
+                  <option value="">Select gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+                <FieldError message={errors.gender?.message} />
+              </div>
+
+              <div>
+                <label htmlFor="contactInfo" className="block text-sm font-medium text-gray-700 mb-1">Contact Info (Phone)</label>
+                <input
+                  id="contactInfo"
+                  type="text"
+                  autoComplete="tel"
+                  className={`input-field ${errors.contactInfo ? 'border-red-400' : ''}`}
+                  {...register('contactInfo')}
+                />
+                <FieldError message={errors.contactInfo?.message} />
+              </div>
+
+              <div>
+                <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                <textarea
+                  id="address"
+                  rows={2}
+                  className={`input-field ${errors.address ? 'border-red-400' : ''}`}
+                  {...register('address')}
+                />
+                <FieldError message={errors.address?.message} />
+              </div>
+
+              <div>
+                <label htmlFor="landDetails" className="block text-sm font-medium text-gray-700 mb-1">Land Details</label>
+                <textarea
+                  id="landDetails"
+                  rows={2}
+                  className={`input-field ${errors.landDetails ? 'border-red-400' : ''}`}
+                  {...register('landDetails')}
+                />
+                <FieldError message={errors.landDetails?.message} />
+              </div>
             </div>
 
             <button
@@ -134,7 +222,7 @@ const FarmerRegistrationPage: React.FC = () => {
             </button>
           </form>
 
-          <p className="mt-4 text-center text-sm text-gray-500">
+          <p className="mt-6 text-center text-sm text-gray-500">
             Already registered?{' '}
             <Link to="/login" className="text-primary-600 hover:underline">Sign in</Link>
           </p>
