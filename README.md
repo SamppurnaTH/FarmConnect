@@ -1,128 +1,109 @@
-# KrishiSetu
-**Bridging the Gap between Farmers, Traders, and Government Programs**
+# KrishiSetu: Enterprise Agricultural Supply Chain Ecosystem
 
-## Overview
-KrishiSetu is a comprehensive agricultural supply chain management platform designed to digitize and streamline the ecosystem of farming, trading, and government interventions. It solves the real-world problem of fragmented communication and lack of transparency in the agricultural sector by providing a unified digital interface for all stakeholders—ensuring that farmers get fair access to markets and subsidies while providing government bodies with robust compliance and reporting tools.
+[![Backend CI/CD](https://github.com/SamppurnaTH/KrishiSetu/actions/workflows/backend-ci.yml/badge.svg)](https://github.com/SamppurnaTH/KrishiSetu/actions)
+[![Frontend CI/CD](https://github.com/SamppurnaTH/KrishiSetu/actions/workflows/frontend-ci.yml/badge.svg)](https://github.com/SamppurnaTH/KrishiSetu/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Key Features
-*   **Decentralized Identity Management**: Secure authentication and role-based access control (RBAC) specifically tailored for Farmers, Traders, Market Officers, and Admins.
-*   **Digital Farmer Onboarding**: Automated registration workflow with support for document uploads, land detail verification, and profile management.
-*   **Crop & Inventory Tracking**: Direct-from-farm crop listing and management, allowing for better visibility into available agricultural produce.
-*   **Integrated Subsidy Pipeline**: End-to-end management of government subsidy programs, including application processing and disbursement tracking.
-*   **Market Compliance Engine**: Automated verification of documents and transactions to ensure adherence to agricultural standards and regulations.
-*   **Multi-Dimensional Reporting**: Specialized dashboards for tracking market trends, transaction volumes, and compliance metrics.
-*   **Real-time Notifications**: Alert system for status updates on registrations, payments, and program eligibility.
+**KrishiSetu** is a decentralized, resilient, and enterprise-grade agritech platform designed to digitize the entire agricultural value chain. By bridging the gap between farmers, traders, and government programs, it provides a unified source of truth for market transactions, subsidy management, and regulatory compliance.
 
-## System Architecture
-The system follows a **Microservices Architecture** to ensure scalability and independent deployment of specialized business domains.
-*   **Frontend**: A modern Single Page Application (SPA) built with React, utilizing a modular component architecture and centralized state management.
-*   **Backend**: 9 independent Spring Boot microservices, each responsible for a specific domain (Identity, Farmer, Crop, Transaction, etc.).
-*   **Persistence**: A "Database per Service" pattern using PostgreSQL to ensure strict data isolation and domain integrity.
-*   **API Gateway/Proxy**: Nginx is used in production (and Vite proxy in development) to route traffic from the frontend to the appropriate microservice ports (8081-8089).
+---
 
-## Tech Stack
-*   **Frontend**: React 18, TypeScript, Vite, Tailwind CSS, Lucide React (Icons), Axios (API Client).
-*   **Backend**: Java 17, Spring Boot 3.2.5, Spring Data JPA, Hibernate, Maven.
-*   **Database**: PostgreSQL 15.
-*   **DevOps**: Docker, Nginx.
+## 🏗️ Technical Architecture
 
-## Installation & Setup
+KrishiSetu is built on a **High-Concurrency Microservices Architecture**, ensuring domain isolation, horizontal scalability, and fault tolerance.
+
+### Service Mesh & Orchestration
+The ecosystem comprises 9 specialized Spring Boot microservices, coordinated via a robust container orchestration layer:
+
+| Domain | Service | Responsibilities |
+| :--- | :--- | :--- |
+| **Identity** | `identity-service` | RBAC, JWT Issuance, OAuth2, System-wide Audit Logging |
+| **Farmer** | `farmer-service` | Profile Lifecycle, KYC Documents, Land Verification |
+| **Marketplace** | `crop-service` | Decentralized Inventory, Price Indexing, Listing Management |
+| **Commerce** | `transaction-service` | Secure Trade Execution, Settlement, Digital Ledger Entry |
+| **Governance** | `subsidy-service` | Grant Allocation, Eligibility Scoring, Program Disbursement |
+| **Assurance** | `compliance-service` | Automated Verification, Regulatory Checkpoints, Fraud Detection |
+| **Intelligence** | `reporting-service` | KPI Dashboards, Market Analytics, Periodic PDF/JSON Reports |
+| **Engagement** | `notification-service` | Multi-channel Alerts, Event-driven Status Updates |
+| **Operations** | `trader-service` | Trader Reputation, Performance Metrics, Procurement Flow |
+
+### Data Strategy
+- **Persistence Layer**: Each service encapsulates its own **PostgreSQL 15** database, adhering strictly to the "Database per Service" pattern.
+- **Resilience**: Integrated Docker Health Checks and robust `depends_on` conditions ensure a deterministic system startup.
+
+---
+
+## 🛠️ Technology Stack
+
+| Component | technologies |
+| :--- | :--- |
+| **Core Framework** | Java 17, Spring Boot 3.2.5, Spring Data JPA |
+| **Frontend Ecosystem** | React 18, TypeScript, Vite, Tailwind CSS, Lucide |
+| **Security Architecture** | JWT (JSON Web Tokens), BCrypt, Spring Security |
+| **Infrastucture** | Docker Engine, Docker Compose, Nginx Proxy |
+| **DevOps & CI/CD** | GitHub Actions, GHCR (GitHub Container Registry) |
+
+---
+
+## 🚀 Operational Quick-Start
 
 ### Prerequisites
-*   Java 17 or higher
-*   Node.js 18.x or higher
-*   Docker & Docker Compose
-*   Maven 3.8+
+- **Runtimes**: Java 17+, Node.js 20+
+- **Tooling**: Maven 3.8+, Docker Desktop / Engine
+- **Resources**: Minimum 8GB RAM recommended for full-stack orchestration
 
-### Step-by-Step Setup
-1.  **Clone the Repository**:
-    ```bash
-    git clone <repository-url>
-    cd Agri
-    ```
+### Deployment Workflow
+1. **Cloud-Native Packaging**:
+   Assemble the microservice binaries using Maven:
+   ```bash
+   cd agri-chain
+   mvn clean package -DskipTests
+   cd ..
+   ```
 
-2.  **Build the Backend**:
-    ```bash
-    cd agri-chain
-    mvn clean package -DskipTests
-    cd ..
-    ```
+2. **Containerized Orchestration**:
+   Launch the entire KrishiSetu ecosystem with a single command:
+   ```bash
+   docker-compose up -d --build
+   ```
 
-3.  **Run with Docker Compose**:
-    ```bash
-    docker-compose up -d --build
-    ```
+3. **Infrastructural Verification**:
+   Ensure all 11 core components are operational:
+   - **Frontend Interface**: `http://localhost:80`
+   - **Backend API Mesh**: `ports 8081-8089` (Routed through internal Nginx proxy)
 
-4.  **Access the Application**:
-    - Frontend: `http://localhost:80`
-    - Backend Services: `http://localhost:8081` through `8089`
+---
 
-## Usage
+## 🔐 Security & Compliance
 
-### Farmer Registration Flow
-1.  Navigate to the **Register** page.
-2.  Fill in personal details (Name, Contact, Address) and land specifications.
-3.  Upload required identification and land ownership documents.
-4.  Once submitted, the account enters `Pending_Verification` status, awaiting review by a Market Officer.
+KrishiSetu prioritizes institutional data integrity and security through multiple layers of fortification:
+- **JWT-Based Authentication**: Secure, stateless session management across the microservices mesh.
+- **Granular RBAC**: Role-Based Access Control specifically optimized for **Farmers**, **Traders**, **Market Officers**, and **Administrators**.
+- **Comprehensive Audit Trail**: Every transaction and status change is immutably logged with correlation IDs for forensic reporting.
+- **Encrypted Data Flows**: Support for industry-standard encryption for sensitive PII (Personally Identifiable Information).
 
-### Crop Listing Flow
-1.  Log in as a **Farmer**.
-2.  Navigate to **My Crops** section.
-3.  Create a new listing with crop type, quantity, and expected pricing.
-4.  The listing becomes visible to registered **Traders** for potential procurement.
+---
 
-## API Documentation
+## 📈 Strategic Roadmap
 
-### Important Endpoints
+- [ ] **Blockchain Ledger Integration**: Implementing Hyperledger Fabric for immutable trade tracking.
+- [ ] **AI-Driven Analytics**: Predictive algorithms for regional crop yield and market price suggestions.
+- [ ] **IoT Sensor Mesh**: Support for real-time soil and weather telemetry via specialized edge-connectors.
+- [ ] **Internationalization (i18n)**: Multi-language support to cater to regional agricultural hubs.
 
-| Service | Endpoint | Method | Description |
-| :--- | :--- | :--- | :--- |
-| **Identity** | `/audit-log` | `GET` | Retrieve system-wide audit records |
-| **Farmer** | `/farmers` | `POST` | Register a new farmer profile |
-| **Crop** | `/crops` | `GET` | List all available agricultural produce |
-| **Subsidy** | `/programs` | `POST` | Create a new government subsidy program |
-| **Trader** | `/traders/{id}` | `GET` | Retrieve trader performance and profile |
+---
 
-**Sample Registration Request (`POST /api/farmers`):**
-```json
-{
-  "name": "Venu Thota",
-  "contactInfo": "+919505511839",
-  "address": "Sri Ram Nagar",
-  "landDetails": "2.5 Acres - Paddy",
-  "gender": "Male"
-}
-```
+## 🤝 Contribution & Governance
 
-## Folder Structure
-```text
-Agri/
-├── agri-chain/               # Backend Microservices (Java/Spring)
-│   ├── identity-service/     # Auth and RBAC
-│   ├── farmer-service/       # Farmer domain logic
-│   ├── crop-service/         # Crop marketplace logic
-│   ├── common/               # Shared DTOs and Enums
-│   └── ...                   # Other domain services (subsidy, compliance, etc.)
-├── agri-chain-frontend/      # Frontend Application (React/Vite)
-│   ├── src/api/              # Axios API clients
-│   ├── src/pages/            # Role-based UI components
-│   └── src/stores/           # Zustand state management
-├── docker-compose.yml        # Multi-container orchestration
-└── init.sql                  # Database initialization scripts
-```
+Institutional contributions are welcome. Please adhere to the established workflow:
+1. Feature Branching (`feature/enhanced-telemetry`)
+2. Structured Commits (Conventional Commits)
+3. Mandatory PR Review for Merges into `main`
 
-## Future Enhancements
-*   **Blockchain Integration**: Implement a Distributed Ledger (Hyperledger Fabric/Ethereum) for immutable record-keeping of transactions.
-*   **AI/ML Price Prediction**: Integrate predictive models to suggest optimal selling prices based on market trends.
-*   **Offline Support**: Progressive Web App (PWA) features for farmers in low-connectivity areas.
-*   **IoT Integration**: Support for soil moisture sensors and weather stations via a dedicated IoT microservice.
+---
 
-## Contribution Guidelines
-1.  Fork the project.
-2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`).
-3.  Commit your changes (`git commit -m 'Add some AmazingFeature'`).
-4.  Push to the branch (`git push origin feature/AmazingFeature`).
-5.  Open a Pull Request.
+## 📄 License
+This project is licensed under the **MIT Enterprise License**.
 
-## License
-Suggested: **MIT License**.
+---
+© 2026 KrishiSetu Platform - Bridging the Digital Divide in Agriculture.
