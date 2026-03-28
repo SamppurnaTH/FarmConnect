@@ -12,7 +12,7 @@ import { Plus, Send, Download, Loader2 } from 'lucide-react';
  * AuditsPage — Requirement 9.3-9.6
  */
 const AuditsPage: React.FC = () => {
-  const { role } = useAuthStore();
+  const { role, userId } = useAuthStore();
   const { showToast } = useToast();
   const isOnline = useIsOnline();
   const [audits, setAudits] = useState<Audit[]>([]);
@@ -27,7 +27,7 @@ const AuditsPage: React.FC = () => {
   const handleCreate = async () => {
     if (!scope.trim()) { showToast('Scope is required', 'error'); return; }
     try {
-      await complianceApi.createAudit(scope);
+      await complianceApi.createAudit(scope, userId ?? 'system');
       showToast('Audit initiated', 'success');
       setScope('');
       load();

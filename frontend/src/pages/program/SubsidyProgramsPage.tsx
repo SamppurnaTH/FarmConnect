@@ -62,7 +62,7 @@ const SubsidyProgramsPage: React.FC = () => {
       return;
     }
     try {
-      await subsidiesApi.createDisbursement(programId, { farmerId: disbForm.farmerId, amount, programCycle: disbForm.programCycle });
+      await subsidiesApi.createDisbursement({ programId, farmerId: disbForm.farmerId, amount, programCycle: disbForm.programCycle });
       showToast('Disbursement created', 'success');
       setDisbFormId(null);
       setDisbForm({ farmerId: '', amount: '', programCycle: '' });

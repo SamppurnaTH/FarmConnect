@@ -3,6 +3,7 @@ import { NavMenu } from '../../components/NavMenu';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { FieldError } from '../../components/FieldError';
 import { cropsApi } from '../../api/crops';
+import { useAuthStore } from '../../stores/authStore';
 import { useToast } from '../../components/ToastProvider';
 import { useIsOnline } from '../../components/ConnectivityBanner';
 import type { CropListing } from '../../types';
@@ -14,6 +15,7 @@ import { SlidersHorizontal, ShoppingCart, Loader2 } from 'lucide-react';
 const BrowseListingsPage: React.FC = () => {
   const { showToast } = useToast();
   const isOnline = useIsOnline();
+  const { userId } = useAuthStore();
   const [listings, setListings] = useState<CropListing[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({ cropType: '', location: '', minPrice: '', maxPrice: '' });
@@ -48,7 +50,7 @@ const BrowseListingsPage: React.FC = () => {
     setOrdering(listingId);
     setOrderError((p) => ({ ...p, [listingId]: '' }));
     try {
-      await cropsApi.placeOrder(listingId, qty);
+      await cropsApi.placeOrder(listingId, userId ?? '', qty);
       showToast('Order placed successfully!', 'success');
       setOrderQty((p) => ({ ...p, [listingId]: '' }));
     } catch (err: unknown) {
