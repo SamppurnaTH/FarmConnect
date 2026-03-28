@@ -1,0 +1,96 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+@theme {
+  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
+
+  /* Primary Branding Colors - Lush Emerald */
+  --color-primary-50:  hsl(140 100% 98%);
+  --color-primary-100: hsl(140 90% 94%);
+  --color-primary-200: hsl(140 85% 86%);
+  --color-primary-300: hsl(142 80% 70%);
+  --color-primary-400: hsl(142 75% 55%);
+  --color-primary-500: hsl(142 76% 40%);
+  --color-primary-600: hsl(142 76% 36%);
+  --color-primary-700: hsl(142 72% 29%);
+  --color-primary-800: hsl(143 70% 24%);
+  --color-primary-900: hsl(144 65% 20%);
+
+  /* Functional Grays - Modern Slate */
+  --color-surface-50:  hsl(210 40% 98%);
+  --color-surface-100: hsl(210 40% 96%);
+  --color-surface-200: hsl(214 32% 91%);
+  --color-surface-600: hsl(215 25% 40%);
+  --color-surface-900: hsl(222 47% 11%);
+
+  /* Accents */
+  --color-accent-gold:  hsl(45 92% 50%);
+  --color-accent-sky:   hsl(199 89% 48%);
+  --color-accent-earth: hsl(24 54% 44%);
+
+  /* Elevations */
+  --shadow-premium:  0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+  --shadow-glass:   0 8px 32px 0 rgba(31, 38, 135, 0.07);
+}
+
+@layer base {
+  body {
+    @apply bg-surface-50 text-surface-900 font-sans antialiased;
+    background-image: radial-gradient(at 0% 0%, hsla(142, 76%, 36%, 0.03) 0, transparent 50%),
+                      radial-gradient(at 50% 0%, hsla(45, 92%, 50%, 0.02) 0, transparent 50%);
+    min-height: 100vh;
+    scroll-behavior: smooth;
+  }
+
+  h1, h2, h3, h4 {
+    @apply tracking-tight font-bold text-slate-900;
+  }
+}
+
+@layer components {
+  /* Premium Buttons */
+  .btn-primary {
+    @apply relative overflow-hidden bg-primary-600 text-white px-6 py-2.5 rounded-xl font-semibold 
+           shadow-sm transition-all duration-300 hover:bg-primary-700 hover:shadow-lg hover:-translate-y-0.5
+           active:translate-y-0 active:scale-95 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-surface-600 px-6 py-2.5 rounded-xl font-semibold border border-surface-200
+           shadow-sm transition-all duration-300 hover:bg-surface-100 hover:text-surface-900
+           focus:ring-2 focus:ring-primary-500;
+  }
+
+  /* Sophisticated Cards */
+  .card {
+    @apply bg-white/80 backdrop-blur-md rounded-2xl shadow-premium border border-white/40 p-8 
+           transition-all duration-500 hover:shadow-glass hover:bg-white;
+  }
+
+  /* Animated Inputs */
+  .input-field {
+    @apply w-full px-4 py-3 bg-white border border-surface-200 rounded-xl text-sm 
+           transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500/20 
+           focus:border-primary-500 placeholder:text-surface-600/50;
+  }
+
+  /* Branded Badges */
+  .badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm;
+  }
+  .badge-pending  { @apply bg-amber-50 text-amber-700 border border-amber-200/50; }
+  .badge-active   { @apply bg-emerald-50 text-emerald-700 border border-emerald-200/50; }
+  .badge-rejected { @apply bg-rose-50 text-rose-700 border border-rose-200/50; }
+  .badge-verified { @apply bg-indigo-50 text-indigo-700 border border-indigo-200/50; }
+  .badge-settled  { @apply bg-teal-50 text-teal-700 border border-teal-200/50; }
+}
+
+/* Micro-animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

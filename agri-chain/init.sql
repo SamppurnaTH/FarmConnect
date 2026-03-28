@@ -1,0 +1,9 @@
+CREATE DATABASE agrichain_identity;
+CREATE DATABASE agrichain_farmer;
+CREATE DATABASE agrichain_crop;
+CREATE DATABASE agrichain_transaction;
+CREATE DATABASE agrichain_subsidy;
+CREATE DATABASE agrichain_compliance;
+CREATE DATABASE agrichain_reporting;
+CREATE DATABASE agrichain_notification;
+CREATE DATABASE agrichain_trader;

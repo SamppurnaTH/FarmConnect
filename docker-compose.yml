@@ -1,0 +1,197 @@
+x-common-env: &common-env
+  DB_USER: agrichain
+  DB_PASSWORD: agrichain
+  ENCRYPTION_KEY: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+
+x-service-defaults: &service-defaults
+  restart: on-failure
+  depends_on:
+    postgres:
+      condition: service_healthy
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: agrichain-postgres
+    environment:
+      POSTGRES_USER: agrichain
+      POSTGRES_PASSWORD: agrichain
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./agri-chain/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U agrichain"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  identity-service:
+    <<: *service-defaults
+    build:
+      context: ./agri-chain
+      args:
+        MODULE_NAME: identity-service
+    container_name: agrichain-identity
+    ports:
+      - "8081:8081"
+    environment:
+      <<: *common-env
+      SERVER_PORT: 8081
+      DB_URL: jdbc:postgresql://postgres:5432/agrichain_identity
+      JWT_SECRET: agrichain-jwt-secret-key-32chars!!
+
+  farmer-service:
+    <<: *service-defaults
+    build:
+      context: ./agri-chain
+      args:
+        MODULE_NAME: farmer-service
+    container_name: agrichain-farmer
+    ports:
+      - "8082:8082"
+    environment:
+      <<: *common-env
+      SERVER_PORT: 8082
+      DB_URL: jdbc:postgresql://postgres:5432/agrichain_farmer
+      IDENTITY_SERVICE_URL: http://identity-service:8081
+
+  crop-service:
+    <<: *service-defaults
+    build:
+      context: ./agri-chain
+      args:
+        MODULE_NAME: crop-service
+    container_name: agrichain-crop
+    ports:
+      - "8083:8083"
+    environment:
+      <<: *common-env
+      SERVER_PORT: 8083
+      DB_URL: jdbc:postgresql://postgres:5432/agrichain_crop
+      IDENTITY_SERVICE_URL: http://identity-service:8081
+      FARMER_SERVICE_URL: http://farmer-service:8082
+
+  transaction-service:
+    <<: *service-defaults
+    build:
+      context: ./agri-chain
+      args:
+        MODULE_NAME: transaction-service
+    container_name: agrichain-transaction
+    ports:
+      - "8084:8084"
+    environment:
+      <<: *common-env
+      SERVER_PORT: 8084
+      DB_URL: jdbc:postgresql://postgres:5432/agrichain_transaction
+      IDENTITY_SERVICE_URL: http://identity-service:8081
+      FARMER_SERVICE_URL: http://farmer-service:8082
+      CROP_SERVICE_URL: http://crop-service:8083
+
+  subsidy-service:
+    <<: *service-defaults
+    build:
+      context: ./agri-chain
+      args:
+        MODULE_NAME: subsidy-service
+    container_name: agrichain-subsidy
+    ports:
+      - "8085:8085"
+    environment:
+      <<: *common-env
+      SERVER_PORT: 8085
+      DB_URL: jdbc:postgresql://postgres:5432/agrichain_subsidy
+      IDENTITY_SERVICE_URL: http://identity-service:8081
+      FARMER_SERVICE_URL: http://farmer-service:8082
+      TRANSACTION_SERVICE_URL: http://transaction-service:8084
+
+  compliance-service:
+    <<: *service-defaults
+    build:
+      context: ./agri-chain
+      args:
+        MODULE_NAME: compliance-service
+    container_name: agrichain-compliance
+    ports:
+      - "8086:8086"
+    environment:
+      <<: *common-env
+      SERVER_PORT: 8086
+      DB_URL: jdbc:postgresql://postgres:5432/agrichain_compliance
+      IDENTITY_SERVICE_URL: http://identity-service:8081
+      FARMER_SERVICE_URL: http://farmer-service:8082
+      TRANSACTION_SERVICE_URL: http://transaction-service:8084
+      SUBSIDY_SERVICE_URL: http://subsidy-service:8085
+
+  reporting-service:
+    <<: *service-defaults
+    build:
+      context: ./agri-chain
+      args:
+        MODULE_NAME: reporting-service
+    container_name: agrichain-reporting
+    ports:
+      - "8087:8087"
+    environment:
+      <<: *common-env
+      SERVER_PORT: 8087
+      DB_URL: jdbc:postgresql://postgres:5432/agrichain_reporting
+      IDENTITY_SERVICE_URL: http://identity-service:8081
+      FARMER_SERVICE_URL: http://farmer-service:8082
+      CROP_SERVICE_URL: http://crop-service:8083
+      TRANSACTION_SERVICE_URL: http://transaction-service:8084
+      SUBSIDY_SERVICE_URL: http://subsidy-service:8085
+      COMPLIANCE_SERVICE_URL: http://compliance-service:8086
+
+  notification-service:
+    <<: *service-defaults
+    build:
+      context: ./agri-chain
+      args:
+        MODULE_NAME: notification-service
+    container_name: agrichain-notification
+    ports:
+      - "8088:8088"
+    environment:
+      <<: *common-env
+      SERVER_PORT: 8088
+      DB_URL: jdbc:postgresql://postgres:5432/agrichain_notification
+      IDENTITY_SERVICE_URL: http://identity-service:8081
+
+  trader-service:
+    <<: *service-defaults
+    build:
+      context: ./agri-chain
+      args:
+        MODULE_NAME: trader-service
+    container_name: agrichain-trader
+    ports:
+      - "8089:8089"
+    environment:
+      <<: *common-env
+      SERVER_PORT: 8089
+      DB_URL: jdbc:postgresql://postgres:5432/agrichain_trader
+      IDENTITY_SERVICE_URL: http://identity-service:8081
+      CROP_SERVICE_URL: http://crop-service:8083
+
+  frontend:
+    build:
+      context: ./agri-chain-frontend
+    container_name: agrichain-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - identity-service
+      - farmer-service
+      - crop-service
+      - transaction-service
+      - subsidy-service
+      - compliance-service
+      - reporting-service
+      - notification-service
+      - trader-service
+
+volumes:
+  postgres_data:
