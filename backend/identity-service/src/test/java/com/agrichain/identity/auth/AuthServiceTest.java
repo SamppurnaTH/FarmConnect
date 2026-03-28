@@ -303,13 +303,19 @@ class AuthServiceTest {
         UUID oldId = UUID.randomUUID();
         Claims claims = claimsFor(oldId, "farmer1");
 
+        User user = new User();
+        user.setId(UUID.randomUUID());
+        user.setRole(UserRole.Farmer);
+
         when(jwtService.parse("old.token")).thenReturn(claims);
         when(tokenStore.isActive(oldId)).thenReturn(true);
         when(jwtService.issue(eq("farmer1"), any(UUID.class))).thenReturn("new.token");
+        when(jwtService.getExpiryMinutes()).thenReturn(30L);
+        when(userRepository.findByUsername("farmer1")).thenReturn(Optional.of(user));
 
-        String result = authService.refresh("old.token");
+        AuthService.LoginResult result = authService.refresh("old.token");
 
-        assertThat(result).isEqualTo("new.token");
+        assertThat(result.token()).isEqualTo("new.token");
         verify(tokenStore).invalidate(oldId);
         verify(tokenStore).store(any(UUID.class), eq("farmer1"));
     }

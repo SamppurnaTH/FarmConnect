@@ -175,7 +175,12 @@ class AuthControllerTest {
 
     @Test
     void refresh_validToken_returns200WithNewToken() throws Exception {
-        when(authService.refresh("old.jwt.token")).thenReturn("new.jwt.token");
+        AuthService.LoginResult result = new AuthService.LoginResult(
+                "new.jwt.token",
+                com.agrichain.common.enums.UserRole.Farmer,
+                java.util.UUID.randomUUID(),
+                java.time.Instant.now().plusSeconds(1800));
+        when(authService.refresh("old.jwt.token")).thenReturn(result);
 
         mockMvc.perform(post("/auth/refresh")
                         .header("Authorization", "Bearer old.jwt.token"))

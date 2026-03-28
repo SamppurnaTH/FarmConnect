@@ -67,8 +67,8 @@ public class AuthController {
     @PostMapping("/refresh")
     public ResponseEntity<?> refresh(@RequestHeader("Authorization") String authHeader) {
         String token = extractBearer(authHeader);
-        String newToken = authService.refresh(token);
-        return ResponseEntity.ok(new LoginResponse(newToken));
+        AuthService.LoginResult result = authService.refresh(token);
+        return ResponseEntity.ok(new LoginResponse(result.token(), result.role(), result.userId(), result.expiresAt()));
     }
 
     // ── Exception handlers ────────────────────────────────────────────────────

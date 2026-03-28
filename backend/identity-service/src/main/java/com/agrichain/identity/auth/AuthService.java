@@ -107,7 +107,7 @@ public class AuthService {
         tokenStore.invalidate(tokenId);
     }
 
-    public String refresh(String bearerToken) {
+    public LoginResult refresh(String bearerToken) {
         UUID oldTokenId = parseActiveTokenId(bearerToken);
         Claims claims;
         try {
@@ -116,11 +116,14 @@ public class AuthService {
             throw new InvalidTokenException();
         }
         String subject = claims.getSubject();
+        User user = userRepository.findByUsername(subject)
+                .orElseThrow(InvalidTokenException::new);
         UUID newTokenId = UUID.randomUUID();
         String newToken = jwtService.issue(subject, newTokenId);
         tokenStore.invalidate(oldTokenId);
         tokenStore.store(newTokenId, subject);
-        return newToken;
+        Instant expiresAt = Instant.now().plusSeconds(jwtService.getExpiryMinutes() * 60);
+        return new LoginResult(newToken, user.getRole(), user.getId(), expiresAt);
     }
 
     private UUID parseActiveTokenId(String bearerToken) {
