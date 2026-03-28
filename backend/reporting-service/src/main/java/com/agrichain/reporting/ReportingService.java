@@ -115,7 +115,7 @@ public class ReportingService {
         ReportMetadata metadata = metadataRepository.findById(reportId)
                 .orElseThrow(() -> new IllegalArgumentException("Report not found"));
 
-        String content = "KrishiSetu Report\n" +
+        String content = "FarmConnect Report\n" +
                         "ID: " + metadata.getId() + "\n" +
                         "Scope: " + metadata.getScope() + "\n" +
                         "Generated At: " + metadata.getGenerationTimestamp() + "\n\n" +

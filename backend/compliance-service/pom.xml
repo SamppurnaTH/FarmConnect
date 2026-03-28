@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>compliance-service</artifactId>
-    <name>Agri Chain Compliance Service</name>
+    <name>FarmConnect Compliance Service</name>
 
     <dependencies>
         <dependency>

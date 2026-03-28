@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>farmer-service</artifactId>
-    <name>Agri Chain Farmer Service</name>
+    <name>FarmConnect Farmer Service</name>
 
     <dependencies>
         <dependency>

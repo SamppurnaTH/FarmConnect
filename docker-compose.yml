@@ -12,7 +12,7 @@ x-service-defaults: &service-defaults
 services:
   postgres:
     image: postgres:15-alpine
-    container_name: krishisetu-postgres
+    container_name: farmconnect-postgres
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -33,7 +33,7 @@ services:
       context: ./backend
       args:
         MODULE_NAME: identity-service
-    container_name: krishisetu-identity
+    container_name: farmconnect-identity
     ports:
       - "8081:8081"
     environment:
@@ -48,7 +48,7 @@ services:
       context: ./backend
       args:
         MODULE_NAME: farmer-service
-    container_name: krishisetu-farmer
+    container_name: farmconnect-farmer
     ports:
       - "8082:8082"
     environment:
@@ -63,7 +63,7 @@ services:
       context: ./backend
       args:
         MODULE_NAME: crop-service
-    container_name: krishisetu-crop
+    container_name: farmconnect-crop
     ports:
       - "8083:8083"
     environment:
@@ -79,7 +79,7 @@ services:
       context: ./backend
       args:
         MODULE_NAME: transaction-service
-    container_name: krishisetu-transaction
+    container_name: farmconnect-transaction
     ports:
       - "8084:8084"
     environment:
@@ -96,7 +96,7 @@ services:
       context: ./backend
       args:
         MODULE_NAME: subsidy-service
-    container_name: krishisetu-subsidy
+    container_name: farmconnect-subsidy
     ports:
       - "8085:8085"
     environment:
@@ -113,7 +113,7 @@ services:
       context: ./backend
       args:
         MODULE_NAME: compliance-service
-    container_name: krishisetu-compliance
+    container_name: farmconnect-compliance
     ports:
       - "8086:8086"
     environment:
@@ -131,7 +131,7 @@ services:
       context: ./backend
       args:
         MODULE_NAME: reporting-service
-    container_name: krishisetu-reporting
+    container_name: farmconnect-reporting
     ports:
       - "8087:8087"
     environment:
@@ -151,7 +151,7 @@ services:
       context: ./backend
       args:
         MODULE_NAME: notification-service
-    container_name: krishisetu-notification
+    container_name: farmconnect-notification
     ports:
       - "8088:8088"
     environment:
@@ -166,7 +166,7 @@ services:
       context: ./backend
       args:
         MODULE_NAME: trader-service
-    container_name: krishisetu-trader
+    container_name: farmconnect-trader
     ports:
       - "8089:8089"
     environment:
@@ -178,8 +178,8 @@ services:
 
   frontend:
     build:
-      context: ./agri-chain-frontend
-    container_name: krishisetu-frontend
+      context: ./frontend
+    container_name: farmconnect-frontend
     ports:
       - "80:80"
     depends_on:

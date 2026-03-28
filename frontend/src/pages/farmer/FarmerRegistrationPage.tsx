@@ -82,8 +82,8 @@ const FarmerRegistrationPage: React.FC = () => {
           <div className="inline-flex items-center justify-center w-14 h-14 bg-primary-600 rounded-2xl mb-4 shadow-lg">
             <Sprout className="w-7 h-7 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">KrishiSetu</h1>
-          <p className="text-gray-500 mt-1">Join the KrishiSetu platform</p>
+          <h1 className="text-3xl font-bold text-gray-900">FarmConnect</h1>
+          <p className="text-gray-500 mt-1">Join the FarmConnect platform</p>
         </div>
 
         <div className="card shadow-lg">

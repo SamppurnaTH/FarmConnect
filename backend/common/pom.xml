@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>common</artifactId>
-    <name>Agri Chain Common</name>
+    <name>FarmConnect Common</name>
 
     <dependencies>
         <dependency>

@@ -8,7 +8,7 @@
     <artifactId>agri-chain</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>Agri Chain Platform</name>
+    <name>FarmConnect Platform</name>
 
     <modules>
         <module>common</module>

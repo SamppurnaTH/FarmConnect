@@ -1,16 +1,16 @@
-# KrishiSetu: Enterprise Agricultural Supply Chain Ecosystem
+# FarmConnect: Enterprise Agricultural Supply Chain Ecosystem
 
 [![Backend CI/CD](https://github.com/SamppurnaTH/KrishiSetu/actions/workflows/backend-ci.yml/badge.svg)](https://github.com/SamppurnaTH/KrishiSetu/actions)
 [![Frontend CI/CD](https://github.com/SamppurnaTH/KrishiSetu/actions/workflows/frontend-ci.yml/badge.svg)](https://github.com/SamppurnaTH/KrishiSetu/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**KrishiSetu** is a decentralized, resilient, and enterprise-grade agritech platform designed to digitize the entire agricultural value chain. By bridging the gap between farmers, traders, and government programs, it provides a unified source of truth for market transactions, subsidy management, and regulatory compliance.
+**FarmConnect** is a decentralized, resilient, and enterprise-grade agritech platform designed to digitize the entire agricultural value chain. By bridging the gap between farmers, traders, and government programs, it provides a unified source of truth for market transactions, subsidy management, and regulatory compliance.
 
 ---
 
 ## 🏗️ Technical Architecture
 
-KrishiSetu is built on a **High-Concurrency Microservices Architecture**, ensuring domain isolation, horizontal scalability, and fault tolerance.
+FarmConnect is built on a **High-Concurrency Microservices Architecture**, ensuring domain isolation, horizontal scalability, and fault tolerance.
 
 ### Service Mesh & Orchestration
 The ecosystem comprises 9 specialized Spring Boot microservices, coordinated via a robust container orchestration layer:
@@ -62,7 +62,7 @@ The ecosystem comprises 9 specialized Spring Boot microservices, coordinated via
    ```
 
 2. **Containerized Orchestration**:
-   Launch the entire KrishiSetu ecosystem with a single command:
+   Launch the entire FarmConnect ecosystem with a single command:
    ```bash
    docker-compose up -d --build
    ```
@@ -76,7 +76,7 @@ The ecosystem comprises 9 specialized Spring Boot microservices, coordinated via
 
 ## 🔐 Security & Compliance
 
-KrishiSetu prioritizes institutional data integrity and security through multiple layers of fortification:
+FarmConnect prioritizes institutional data integrity and security through multiple layers of fortification:
 - **JWT-Based Authentication**: Secure, stateless session management across the microservices mesh.
 - **Granular RBAC**: Role-Based Access Control specifically optimized for **Farmers**, **Traders**, **Market Officers**, and **Administrators**.
 - **Comprehensive Audit Trail**: Every transaction and status change is immutably logged with correlation IDs for forensic reporting.
@@ -106,4 +106,4 @@ Institutional contributions are welcome. Please adhere to the established workfl
 This project is licensed under the **MIT Enterprise License**.
 
 ---
-© 2026 KrishiSetu Platform - Bridging the Digital Divide in Agriculture.
+© 2026 FarmConnect Platform - Bridging the Digital Divide in Agriculture.

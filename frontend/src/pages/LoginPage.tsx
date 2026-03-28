@@ -76,7 +76,7 @@ const LoginPage: React.FC = () => {
           <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-600 rounded-2xl mb-4 shadow-lg">
             <Sprout className="w-8 h-8 text-white" aria-hidden="true" />
           </div>
-          <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-primary-400">KrishiSetu</h1>
+          <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-primary-400">FarmConnect</h1>
           <p className="text-gray-500 mt-1">Transparency from Seed to Sale</p>
         </div>
 

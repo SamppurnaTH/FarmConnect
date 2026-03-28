@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>notification-service</artifactId>
-    <name>Agri Chain Notification Service</name>
+    <name>FarmConnect Notification Service</name>
 
     <dependencies>
         <dependency>

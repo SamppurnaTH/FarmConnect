@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>transaction-service</artifactId>
-    <name>Agri Chain Transaction Service</name>
+    <name>FarmConnect Transaction Service</name>
 
     <dependencies>
         <dependency>

@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>crop-service</artifactId>
-    <name>Agri Chain Crop Service</name>
+    <name>FarmConnect Crop Service</name>
 
     <dependencies>
         <dependency>

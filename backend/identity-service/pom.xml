@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>identity-service</artifactId>
-    <name>Agri Chain Identity Service</name>
+    <name>FarmConnect Identity Service</name>
 
     <dependencies>
         <dependency>
