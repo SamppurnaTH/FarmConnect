@@ -48,8 +48,8 @@ class IdentityPropertyTest {
         when(passwordEncoder.matches(eq(password), any())).thenReturn(true);
         when(jwtService.issue(eq(username), any(UUID.class))).thenReturn("mock-token-" + UUID.randomUUID());
 
-        String token = authService.login(username, password);
-        assertThat(token).isNotNull().startsWith("mock-token-");
+        AuthService.LoginResult result = authService.login(username, password);
+        assertThat(result.token()).isNotNull().startsWith("mock-token-");
     }
 
     // Feature: agri-chain, Property 2: Invalid credentials never reveal which field was wrong

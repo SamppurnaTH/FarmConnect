@@ -63,7 +63,12 @@ class AuthControllerTest {
 
     @Test
     void login_validCredentials_returns200WithToken() throws Exception {
-        when(authService.login("farmer1", "secret123")).thenReturn("signed.jwt.token");
+        AuthService.LoginResult result = new AuthService.LoginResult(
+                "signed.jwt.token",
+                com.agrichain.common.enums.UserRole.Farmer,
+                java.util.UUID.randomUUID(),
+                java.time.Instant.now().plusSeconds(1800));
+        when(authService.login("farmer1", "secret123")).thenReturn(result);
 
         LoginRequest req = new LoginRequest();
         req.setUsername("farmer1");

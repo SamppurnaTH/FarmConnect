@@ -80,9 +80,9 @@ class AuthServiceTest {
         when(userRepository.findByUsername("farmer1")).thenReturn(Optional.of(user));
         when(jwtService.issue(eq("farmer1"), any(UUID.class))).thenReturn("signed.jwt.token");
 
-        String token = authService.login("farmer1", RAW_PASSWORD);
+        AuthService.LoginResult result = authService.login("farmer1", RAW_PASSWORD);
 
-        assertThat(token).isEqualTo("signed.jwt.token");
+        assertThat(result.token()).isEqualTo("signed.jwt.token");
         verify(tokenStore).store(any(UUID.class), eq("farmer1"));
     }
 
