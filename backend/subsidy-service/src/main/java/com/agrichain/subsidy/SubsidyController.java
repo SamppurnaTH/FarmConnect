@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -20,43 +21,50 @@ public class SubsidyController {
         this.subsidyService = subsidyService;
     }
 
-    /**
-     * POST /subsidies/programs
-     * Create a new subsidy program (Draft).
-     */
     @PostMapping("/programs")
     public ResponseEntity<UUID> createProgram(@Valid @RequestBody ProgramRequest request) {
         UUID id = subsidyService.createProgram(request);
         return ResponseEntity.status(201).body(id);
     }
 
-    /**
-     * PUT /subsidies/programs/{id}/status
-     * Activate or Close a program. Monotonic transition.
-     */
+    @GetMapping("/programs")
+    public ResponseEntity<List<com.agrichain.subsidy.entity.SubsidyProgram>> listPrograms() {
+        return ResponseEntity.ok(subsidyService.listPrograms());
+    }
+
+    @GetMapping("/programs/{id}")
+    public ResponseEntity<com.agrichain.subsidy.entity.SubsidyProgram> getProgram(@PathVariable UUID id) {
+        return ResponseEntity.ok(subsidyService.getProgram(id));
+    }
+
     @PutMapping("/programs/{id}/status")
     public ResponseEntity<Void> updateProgramStatus(@PathVariable UUID id, @RequestParam SubsidyProgramStatus status) {
         subsidyService.updateProgramStatus(id, status);
         return ResponseEntity.noContent().build();
     }
 
-    /**
-     * POST /subsidies/disbursements
-     * Farmer apply for disbursement.
-     */
+    @PutMapping("/programs/{id}/close")
+    public ResponseEntity<Void> closeProgram(@PathVariable UUID id) {
+        subsidyService.updateProgramStatus(id, SubsidyProgramStatus.Closed);
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping("/disbursements")
     public ResponseEntity<UUID> applyForDisbursement(@Valid @RequestBody DisbursementRequest request) {
         UUID id = subsidyService.applyForDisbursement(request);
         return ResponseEntity.status(201).body(id);
     }
 
-    /**
-     * PUT /subsidies/disbursements/{id}/approve
-     * Market Officer approve disbursement.
-     */
+    @GetMapping("/disbursements")
+    public ResponseEntity<List<com.agrichain.subsidy.entity.Disbursement>> listDisbursements() {
+        return ResponseEntity.ok(subsidyService.listDisbursements());
+    }
+
     @PutMapping("/disbursements/{id}/approve")
-    public ResponseEntity<Void> approveDisbursement(@PathVariable UUID id, @RequestParam UUID reviewerId) {
-        subsidyService.approveDisbursement(id, reviewerId);
+    public ResponseEntity<Void> approveDisbursement(
+            @PathVariable UUID id,
+            @RequestParam(required = false) UUID reviewerId) {
+        subsidyService.approveDisbursement(id, reviewerId != null ? reviewerId : UUID.randomUUID());
         return ResponseEntity.noContent().build();
     }
 
@@ -64,8 +72,6 @@ public class SubsidyController {
     public ResponseEntity<java.math.BigDecimal> getTotalDisbursed() {
         return ResponseEntity.ok(subsidyService.getTotalDisbursed());
     }
-
-    // ── Exception handlers ────────────────────────────────────────────────────
 
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<Map<String, String>> handleStateError(IllegalStateException ex) {

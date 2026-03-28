@@ -7,11 +7,14 @@ export const apiClient = axios.create({
   timeout: 30000,
 });
 
-// ─── Request interceptor: attach Bearer token ─────────────────────────────────
+// ─── Request interceptor: attach Bearer token + X-User-ID ────────────────────
 apiClient.interceptors.request.use((config) => {
-  const token = useAuthStore.getState().token;
+  const { token, userId } = useAuthStore.getState();
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
+  }
+  if (userId) {
+    config.headers['X-User-ID'] = userId;
   }
   return config;
 });

@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     proxy: {
-      '^/api/(auth|roles|audit-log)': {
+      '^/api/(auth|roles|audit-log|users)': {
         target: 'http://localhost:8081',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
@@ -32,7 +32,7 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
-      '^/api/(compliance|audits)': {
+      '^/api/(compliance|compliance-records|audits)': {
         target: 'http://localhost:8086',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),

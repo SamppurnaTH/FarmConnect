@@ -64,10 +64,17 @@ public class CropListingService {
         }
     }
 
+    public java.util.Optional<CropListing> getListing(UUID id) {
+        return cropListingRepository.findById(id);
+    }
+
     /**
-     * Requirement 8.1: Search listings.
+     * Requirement 8.1: Search listings by location or farmerId.
      */
-    public List<CropListing> searchListings(String location) {
+    public List<CropListing> searchListings(String location, UUID farmerId) {
+        if (farmerId != null) {
+            return cropListingRepository.findByFarmerIdAndStatus(farmerId, ListingStatus.Active);
+        }
         if (location != null && !location.isBlank()) {
             return cropListingRepository.findByStatusAndLocationContainingIgnoreCase(ListingStatus.Active, location);
         }

@@ -155,4 +155,17 @@ public class SubsidyService {
                 .map(SubsidyProgram::getTotalDisbursed)
                 .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
     }
+
+    public java.util.List<SubsidyProgram> listPrograms() {
+        return programRepository.findAll();
+    }
+
+    public SubsidyProgram getProgram(UUID id) {
+        return programRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Program not found"));
+    }
+
+    public java.util.List<Disbursement> listDisbursements() {
+        return disbursementRepository.findAll();
+    }
 }

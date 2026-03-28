@@ -71,4 +71,6 @@ public class JwtService {
         Claims claims = parse(token);
         return UUID.fromString(claims.getId());
     }
+
+    public long getExpiryMinutes() { return expiryMinutes; }
 }

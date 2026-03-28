@@ -64,6 +64,10 @@ public class ComplianceService {
         return recordRepository.findByEntityTypeAndEntityId(entityType, entityId);
     }
 
+    public List<com.agrichain.compliance.entity.Audit> listAudits() {
+        return auditRepository.findAll();
+    }
+
     /**
      * Requirement 14.1: Initiate audit.
      */

@@ -47,7 +47,7 @@ public class AuthService {
         this.clock = clock;
     }
 
-    public String login(String username, String rawPassword) {
+    public LoginResult login(String username, String rawPassword) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(AuthenticationFailedException::new);
 
@@ -71,8 +71,12 @@ public class AuthService {
         UUID tokenId = UUID.randomUUID();
         String token = jwtService.issue(user.getUsername(), tokenId);
         tokenStore.store(tokenId, user.getUsername());
-        return token;
+
+        Instant expiresAt = Instant.now().plusSeconds(jwtService.getExpiryMinutes() * 60);
+        return new LoginResult(token, user.getRole(), user.getId(), expiresAt);
     }
+
+    public record LoginResult(String token, com.agrichain.common.enums.UserRole role, UUID userId, Instant expiresAt) {}
 
     private void recordFailedAttempt(User user) {
         Instant now = clock.instant();

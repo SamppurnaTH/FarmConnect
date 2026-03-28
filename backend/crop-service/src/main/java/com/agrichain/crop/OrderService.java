@@ -114,4 +114,8 @@ public class OrderService {
     public java.util.List<Order> getTraderOrders(UUID traderId) {
         return orderRepository.findByTraderId(traderId);
     }
+
+    public java.util.List<Order> getOrdersByListing(UUID listingId) {
+        return orderRepository.findByListingId(listingId);
+    }
 }

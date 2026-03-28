@@ -36,6 +36,9 @@ export interface FarmerProfile {
 }
 
 export interface FarmerRegistrationRequest {
+  username: string;
+  password: string;
+  email: string;
   name: string;
   dateOfBirth: string;
   gender: string;
@@ -156,6 +159,7 @@ export interface Disbursement {
 }
 
 export interface CreateDisbursementRequest {
+  programId: string;
   farmerId: string;
   amount: number;
   programCycle: string;

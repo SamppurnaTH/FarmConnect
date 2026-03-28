@@ -78,7 +78,12 @@ public class FarmerService {
 
     public long countFarmers(FarmerStatus status) {
         if (status == null) return farmerRepository.count();
-        return farmerRepository.findByStatus(status).size(); // Simplified
+        return farmerRepository.findByStatus(status).size();
+    }
+
+    public List<Farmer> listFarmers(FarmerStatus status) {
+        if (status == null) return farmerRepository.findAll();
+        return farmerRepository.findByStatus(status);
     }
 
     @Transactional

@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -31,11 +32,19 @@ public class OrderController {
 
     /**
      * GET /orders
-     * Fetch orders by trader ID.
+     * Fetch orders by traderId or listingId.
      */
     @GetMapping
-    public ResponseEntity<List<com.agrichain.crop.entity.Order>> getOrders(@RequestParam UUID traderId) {
-        return ResponseEntity.ok(orderService.getTraderOrders(traderId));
+    public ResponseEntity<List<com.agrichain.crop.entity.Order>> getOrders(
+            @RequestParam(required = false) UUID traderId,
+            @RequestParam(required = false) UUID listingId) {
+        if (listingId != null) {
+            return ResponseEntity.ok(orderService.getOrdersByListing(listingId));
+        }
+        if (traderId != null) {
+            return ResponseEntity.ok(orderService.getTraderOrders(traderId));
+        }
+        return ResponseEntity.ok(java.util.Collections.emptyList());
     }
 
     /**

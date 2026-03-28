@@ -126,6 +126,10 @@ public class ReportingService {
         return content.getBytes();
     }
 
+    public java.util.List<ReportMetadata> listReports() {
+        return metadataRepository.findAll();
+    }
+
     private void logMetadata(UUID requesterId, String scope) {
         ReportMetadata metadata = new ReportMetadata();
         metadata.setScope(scope);

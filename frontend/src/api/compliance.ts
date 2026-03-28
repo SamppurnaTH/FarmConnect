@@ -30,8 +30,8 @@ export const complianceApi = {
   getAudits: () =>
     apiClient.get<Audit[]>('/compliance/audits').then((r) => r.data),
 
-  createAudit: (scope: string) =>
-    apiClient.post<string>('/compliance/audits', { scope }).then((r) => r.data),
+  createAudit: (scope: string, initiatedBy: string) =>
+    apiClient.post<string>('/compliance/audits', { scope, initiatedBy }).then((r) => r.data),
 
   submitFindings: (id: string, findings: string) =>
     apiClient.put<void>(`/compliance/audits/${id}/findings`, { findings }),
@@ -42,7 +42,7 @@ export const complianceApi = {
       signal,
     }).then((r) => r.data),
 
-  // Audit Log
+  // Audit Log (identity service)
   getAuditLog: (filters: AuditLogFilters = {}) =>
-    apiClient.get<Page<AuditLog>>('/identity/audit-log', { params: filters }).then((r) => r.data),
+    apiClient.get<Page<AuditLog>>('/audit-log', { params: filters }).then((r) => r.data),
 };

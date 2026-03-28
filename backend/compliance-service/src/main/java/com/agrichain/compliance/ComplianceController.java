@@ -43,6 +43,11 @@ public class ComplianceController {
         return ResponseEntity.ok(records);
     }
 
+    @GetMapping("/audits")
+    public ResponseEntity<List<com.agrichain.compliance.entity.Audit>> listAudits() {
+        return ResponseEntity.ok(complianceService.listAudits());
+    }
+
     /**
      * POST /compliance/audits
      * Start an audit.

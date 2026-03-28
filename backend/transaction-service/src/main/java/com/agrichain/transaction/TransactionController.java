@@ -47,6 +47,11 @@ public class TransactionController {
         return ResponseEntity.ok(transactionService.getTotalSettledValue());
     }
 
+    @GetMapping
+    public ResponseEntity<java.util.List<Transaction>> listTransactions() {
+        return ResponseEntity.ok(transactionService.listTransactions());
+    }
+
     /**
      * GET /transactions/{id}
      * Retrieve transaction status.

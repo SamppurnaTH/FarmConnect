@@ -32,11 +32,13 @@ public class ListingController {
 
     /**
      * GET /listings
-     * Search listings by location.
+     * Search listings by location or farmerId.
      */
     @GetMapping
-    public ResponseEntity<List<CropListing>> searchListings(@RequestParam(required = false) String location) {
-        return ResponseEntity.ok(cropListingService.searchListings(location));
+    public ResponseEntity<List<CropListing>> searchListings(
+            @RequestParam(required = false) String location,
+            @RequestParam(required = false) java.util.UUID farmerId) {
+        return ResponseEntity.ok(cropListingService.searchListings(location, farmerId));
     }
 
     /**
@@ -62,6 +64,17 @@ public class ListingController {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, String>> handleClientError(IllegalArgumentException ex) {
         return ResponseEntity.status(400).body(Map.of("error", ex.getMessage()));
+    }
+
+    /**
+     * GET /listings/{id}
+     * Get a single listing by ID.
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<CropListing> getListing(@PathVariable java.util.UUID id) {
+        return cropListingService.getListing(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/total-volume")

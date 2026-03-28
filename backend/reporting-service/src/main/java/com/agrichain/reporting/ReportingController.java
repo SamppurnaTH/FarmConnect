@@ -27,6 +27,11 @@ public class ReportingController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping
+    public ResponseEntity<java.util.List<com.agrichain.reporting.entity.ReportMetadata>> listReports() {
+        return ResponseEntity.ok(reportingService.listReports());
+    }
+
     /**
      * POST /reports
      * Request a periodic report.

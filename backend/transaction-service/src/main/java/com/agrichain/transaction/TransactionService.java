@@ -101,4 +101,8 @@ public class TransactionService {
                 .map(Transaction::getAmount)
                 .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
     }
+
+    public List<Transaction> listTransactions() {
+        return transactionRepository.findAll();
+    }
 }

@@ -57,6 +57,12 @@ public class FarmerController {
         return ResponseEntity.ok(farmerService.countFarmers(status));
     }
 
+    @GetMapping
+    public ResponseEntity<java.util.List<com.agrichain.farmer.entity.Farmer>> listFarmers(
+            @RequestParam(required = false) FarmerStatus status) {
+        return ResponseEntity.ok(farmerService.listFarmers(status));
+    }
+
     /**
      * GET /farmers/{id}
      * Retrieve farmer profile.
