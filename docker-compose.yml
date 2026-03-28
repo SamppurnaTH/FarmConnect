@@ -1,7 +1,7 @@
 x-common-env: &common-env
-  DB_USER: agrichain
-  DB_PASSWORD: agrichain
-  ENCRYPTION_KEY: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+  DB_USER: ${DB_USER}
+  DB_PASSWORD: ${DB_PASSWORD}
+  ENCRYPTION_KEY: ${ENCRYPTION_KEY}
 
 x-service-defaults: &service-defaults
   restart: on-failure
@@ -14,8 +14,8 @@ services:
     image: postgres:15-alpine
     container_name: krishisetu-postgres
     environment:
-      POSTGRES_USER: agrichain
-      POSTGRES_PASSWORD: agrichain
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
@@ -40,7 +40,7 @@ services:
       <<: *common-env
       SERVER_PORT: 8081
       DB_URL: jdbc:postgresql://postgres:5432/agrichain_identity
-      JWT_SECRET: agrichain-jwt-secret-key-32chars!!
+      JWT_SECRET: ${JWT_SECRET}
 
   farmer-service:
     <<: *service-defaults

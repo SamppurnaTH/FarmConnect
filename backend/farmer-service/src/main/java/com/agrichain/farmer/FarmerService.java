@@ -11,8 +11,10 @@ import com.agrichain.farmer.repository.FarmerRepository;
 import com.agrichain.farmer.repository.FarmerDocumentRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
@@ -146,6 +148,11 @@ public class FarmerService {
         );
         try {
             return restTemplate.postForObject(identityServiceUrl + "/auth/register", userRequest, UUID.class);
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode() == HttpStatus.CONFLICT) {
+                throw new IllegalArgumentException("Username or email already registered.");
+            }
+            throw new RuntimeException("Failed to create user account: " + e.getMessage(), e);
         } catch (Exception e) {
             throw new RuntimeException("Failed to create user account: " + e.getMessage(), e);
         }
