@@ -78,6 +78,7 @@ jobs:
           context: ./backend
           push: true
           build-args: MODULE_NAME=${{ matrix.service }}
+          provenance: false
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX_LC }}-${{ matrix.service }}:${{ github.sha }}
             ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX_LC }}-${{ matrix.service }}:latest

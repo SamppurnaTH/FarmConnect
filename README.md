@@ -1,7 +1,7 @@
 # FarmConnect: Enterprise Agricultural Supply Chain Ecosystem
 
-[![Backend CI/CD](https://github.com/SamppurnaTH/KrishiSetu/actions/workflows/backend-ci.yml/badge.svg)](https://github.com/SamppurnaTH/KrishiSetu/actions)
-[![Frontend CI/CD](https://github.com/SamppurnaTH/KrishiSetu/actions/workflows/frontend-ci.yml/badge.svg)](https://github.com/SamppurnaTH/KrishiSetu/actions)
+[![Backend CI/CD](https://github.com/SamppurnaTH/FarmConnect/actions/workflows/backend-ci.yml/badge.svg)](https://github.com/SamppurnaTH/FarmConnect/actions)
+[![Frontend CI/CD](https://github.com/SamppurnaTH/FarmConnect/actions/workflows/frontend-ci.yml/badge.svg)](https://github.com/SamppurnaTH/FarmConnect/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 **FarmConnect** is a decentralized, resilient, and enterprise-grade agritech platform designed to digitize the entire agricultural value chain. By bridging the gap between farmers, traders, and government programs, it provides a unified source of truth for market transactions, subsidy management, and regulatory compliance.
@@ -71,6 +71,22 @@ The ecosystem comprises 9 specialized Spring Boot microservices, coordinated via
    Ensure all 11 core components are operational:
    - **Frontend Interface**: `http://localhost:80`
    - **Backend API Mesh**: `ports 8081-8089` (Routed through internal Nginx proxy)
+
+---
+
+## 🔑 Demo Credentials
+
+To access the platform's various domain-specific features, use the following pre-seeded demo accounts:
+
+| Role | Username | Password |
+| :--- | : :--- | :--- |
+| **Administrator** | `admin_demo` | `Admin@1234` |
+| **Farmer** | `farmer_demo` | `Farm@1234` |
+| **Trader** | `trader_demo` | `Trade@1234` |
+| **Market Officer** | `officer_demo` | `Officer@1234` |
+| **Compliance Officer** | `compliance_demo` | `Comp@1234` |
+| **Government Auditor** | `auditor_demo` | `Audit@1234` |
+| **Program Manager** | `manager_demo` | `Manager@1234` |
 
 ---
 
