@@ -12,7 +12,7 @@ describe('Property 15 — Transaction list renders required fields', () => {
           fc.record({
             id: fc.uuid(),
             orderId: fc.uuid(),
-            amount: fc.float({ min: 0.01, max: 1_000_000 }),
+            amount: fc.float({ min: Math.fround(0.01), max: Math.fround(1_000_000) }),
             status: fc.constantFrom('Pending_Payment', 'Settled', 'Cancelled'),
             createdAt: fc.string(),
             expiresAt: fc.string(),
