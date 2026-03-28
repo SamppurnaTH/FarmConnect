@@ -42,7 +42,19 @@ const LoginPage: React.FC = () => {
     setLoading(true);
     try {
       await login(data);
-      navigate('/dashboard', { replace: true });
+      
+      const { role } = useAuthStore.getState();
+      let target = '/dashboard';
+      
+      switch (role) {
+        case 'Farmer':             target = '/dashboard';        break;
+        case 'Trader':             target = '/listings/browse';  break;
+        case 'Compliance_Officer': target = '/compliance';       break;
+        case 'Government_Auditor': target = '/reports';         break;
+        case 'Administrator':      target = '/audit-log';       break;
+      }
+      
+      navigate(target, { replace: true });
     } catch (err: unknown) {
       const status = (err as { response?: { status?: number } })?.response?.status;
       if (status === 423) {

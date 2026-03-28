@@ -16,7 +16,7 @@ export const subsidiesApi = {
     apiClient.post<string>('/subsidies/programs', data).then((r) => r.data),
 
   activateProgram: (id: string) =>
-    apiClient.put<void>(`/subsidies/programs/${id}/activate`),
+    apiClient.put<void>(`/subsidies/programs/${id}/status`, null, { params: { status: 'Active' } }),
 
   closeProgram: (id: string) =>
     apiClient.put<void>(`/subsidies/programs/${id}/close`),
@@ -25,8 +25,8 @@ export const subsidiesApi = {
   getDisbursements: () =>
     apiClient.get<Disbursement[]>('/subsidies/disbursements').then((r) => r.data),
 
-  createDisbursement: (programId: string, data: CreateDisbursementRequest) =>
-    apiClient.post<string>(`/subsidies/programs/${programId}/disbursements`, data).then((r) => r.data),
+  createDisbursement: (data: CreateDisbursementRequest) =>
+    apiClient.post<string>('/subsidies/disbursements', data).then((r) => r.data),
 
   approveDisbursement: (id: string) =>
     apiClient.put<void>(`/subsidies/disbursements/${id}/approve`),

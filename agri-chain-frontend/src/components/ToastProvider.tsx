@@ -1,33 +1,14 @@
-import React, { createContext, useContext, useCallback, useState } from 'react';
+import React from 'react';
 import { X } from 'lucide-react';
+import { useToastStore } from '../stores/toastStore';
 
-interface Toast {
-  id: string;
-  message: string;
-  type?: 'success' | 'error' | 'info';
-}
-
-interface ToastContextValue {
-  showToast: (message: string, type?: Toast['type']) => void;
-}
-
-const ToastContext = createContext<ToastContextValue>({ showToast: () => {} });
-
-export const useToast = () => useContext(ToastContext);
+export const useToast = () => {
+  const showToast = useToastStore((state) => state.showToast);
+  return { showToast };
+};
 
 export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [toasts, setToasts] = useState<Toast[]>([]);
-
-  const showToast = useCallback((message: string, type: Toast['type'] = 'info') => {
-    const id = Math.random().toString(36).slice(2);
-    setToasts((prev) => [...prev, { id, message, type }]);
-    setTimeout(() => {
-      setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 4000);
-  }, []);
-
-  const dismiss = (id: string) =>
-    setToasts((prev) => prev.filter((t) => t.id !== id));
+  const { toasts, dismissToast } = useToastStore();
 
   const colorMap = {
     success: 'bg-green-600',
@@ -36,7 +17,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   return (
-    <ToastContext.Provider value={{ showToast }}>
+    <>
       {children}
       <div
         aria-live="polite"
@@ -47,11 +28,11 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           <div
             key={t.id}
             role="status"
-            className={`flex items-start gap-3 pointer-events-auto text-white text-sm px-4 py-3 rounded-lg shadow-lg max-w-sm ${colorMap[t.type ?? 'info']} animate-in slide-in-from-right duration-200`}
+            className={`flex items-start gap-3 pointer-events-auto text-white text-sm px-4 py-3 rounded-lg shadow-lg max-w-sm ${colorMap[t.type]} animate-in slide-in-from-right duration-200`}
           >
             <span className="flex-1">{t.message}</span>
             <button
-              onClick={() => dismiss(t.id)}
+              onClick={() => dismissToast(t.id)}
               aria-label="Dismiss notification"
               className="opacity-70 hover:opacity-100 shrink-0"
             >
@@ -60,6 +41,6 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           </div>
         ))}
       </div>
-    </ToastContext.Provider>
+    </>
   );
 };

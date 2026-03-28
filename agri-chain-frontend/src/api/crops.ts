@@ -26,17 +26,17 @@ export const cropsApi = {
   getMyListings: (farmerId: string) =>
     apiClient.get<CropListing[]>('/listings', { params: { farmerId } }).then((r) => r.data),
 
-  placeOrder: (listingId: string, quantity: number) =>
-    apiClient.post<string>(`/listings/${listingId}/orders`, { quantity }).then((r) => r.data),
+  placeOrder: (listingId: string, traderId: string, quantity: number) =>
+    apiClient.post<string>('/orders', { listingId, traderId, quantity }).then((r) => r.data),
 
   getOrdersForListing: (listingId: string) =>
-    apiClient.get<Order[]>(`/listings/${listingId}/orders`).then((r) => r.data),
+    apiClient.get<Order[]>('/orders/listing', { params: { listingId } }).then((r) => r.data),
 
   acceptOrder: (orderId: string) =>
-    apiClient.put<void>(`/orders/${orderId}/accept`),
+    apiClient.put<void>(`/orders/${orderId}/status`, { status: 'Confirmed' }),
 
   declineOrder: (orderId: string) =>
-    apiClient.put<void>(`/orders/${orderId}/decline`),
+    apiClient.put<void>(`/orders/${orderId}/status`, { status: 'Cancelled' }),
 
   getTraderOrders: (traderId: string) =>
     apiClient.get<Order[]>('/orders', { params: { traderId } }).then((r) => r.data),
