@@ -11,7 +11,6 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
-import java.util.Map;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -36,8 +35,8 @@ public class CropListingPropertyTest {
     @Property
     void activeFarmerCanCreateListing(@ForAll("validListingRequests") ListingRequest request) {
         // Setup mock: Farmer is active
-        when(restTemplate.getForObject(any(String.class), eq(Map.class)))
-                .thenReturn(Map.of("status", "Active"));
+        when(restTemplate.getForObject(any(String.class), eq(String.class)))
+                .thenReturn("Active");
         
         when(repository.save(any(CropListing.class))).thenAnswer(invocation -> {
             CropListing l = invocation.getArgument(0);
@@ -56,8 +55,8 @@ public class CropListingPropertyTest {
     void inactiveFarmerCannotCreateListing(@ForAll("validListingRequests") ListingRequest request, 
                                            @ForAll("inactiveStatuses") String status) {
         // Setup mock: Farmer is NOT active
-        when(restTemplate.getForObject(any(String.class), eq(Map.class)))
-                .thenReturn(Map.of("status", status));
+        when(restTemplate.getForObject(any(String.class), eq(String.class)))
+                .thenReturn(status);
 
         try {
             service.createListing(request);
