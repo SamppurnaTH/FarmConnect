@@ -46,6 +46,8 @@ public class SecurityConfig {
                 .requestMatchers("/auth/login").permitAll()
                 // Logout and refresh are handled by the service layer (token validation in AuthService)
                 .requestMatchers("/auth/logout", "/auth/refresh").permitAll()
+                // Register is called by other services (farmer, trader) during public registration
+                .requestMatchers("/auth/register").permitAll()
                 // All other endpoints require authentication
                 .anyRequest().authenticated()
             )
