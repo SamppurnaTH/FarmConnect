@@ -50,7 +50,7 @@ const BrowseListingsPage: React.FC = () => {
     setOrdering(listingId);
     setOrderError((p) => ({ ...p, [listingId]: '' }));
     try {
-      await cropsApi.placeOrder(listingId, userId ?? '', qty);
+      await cropsApi.placeOrder(listingId, userId || '', qty);
       showToast('Order placed successfully!', 'success');
       setOrderQty((p) => ({ ...p, [listingId]: '' }));
     } catch (err: unknown) {

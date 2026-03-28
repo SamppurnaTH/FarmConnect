@@ -27,7 +27,7 @@ const AuditsPage: React.FC = () => {
   const handleCreate = async () => {
     if (!scope.trim()) { showToast('Scope is required', 'error'); return; }
     try {
-      await complianceApi.createAudit(scope, userId ?? 'system');
+      await complianceApi.createAudit(scope, userId || 'system');
       showToast('Audit initiated', 'success');
       setScope('');
       load();
