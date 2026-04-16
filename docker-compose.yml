@@ -55,7 +55,12 @@ services:
       <<: *common-env
       SERVER_PORT: 8082
       DB_URL: jdbc:postgresql://postgres:5432/agrichain_farmer
+      JWT_SECRET: ${JWT_SECRET}
       SERVICES_IDENTITY_URL: http://identity-service:8081
+      SERVICES_NOTIFICATION_URL: http://notification-service:8088
+      DOCUMENT_STORAGE_DIR: /app/uploads/documents
+    volumes:
+      - farmer_documents:/app/uploads/documents
 
   crop-service:
     <<: *service-defaults
@@ -70,8 +75,10 @@ services:
       <<: *common-env
       SERVER_PORT: 8083
       DB_URL: jdbc:postgresql://postgres:5432/agrichain_crop
+      JWT_SECRET: ${JWT_SECRET}
       SERVICES_IDENTITY_URL: http://identity-service:8081
       SERVICES_FARMER_URL: http://farmer-service:8082
+      SERVICES_NOTIFICATION_URL: http://notification-service:8088
 
   transaction-service:
     <<: *service-defaults
@@ -86,6 +93,7 @@ services:
       <<: *common-env
       SERVER_PORT: 8084
       DB_URL: jdbc:postgresql://postgres:5432/agrichain_transaction
+      JWT_SECRET: ${JWT_SECRET}
       SERVICES_IDENTITY_URL: http://identity-service:8081
       SERVICES_FARMER_URL: http://farmer-service:8082
       SERVICES_CROP_URL: http://crop-service:8083
@@ -103,9 +111,11 @@ services:
       <<: *common-env
       SERVER_PORT: 8085
       DB_URL: jdbc:postgresql://postgres:5432/agrichain_subsidy
+      JWT_SECRET: ${JWT_SECRET}
       SERVICES_IDENTITY_URL: http://identity-service:8081
       SERVICES_FARMER_URL: http://farmer-service:8082
       SERVICES_TRANSACTION_URL: http://transaction-service:8084
+      SERVICES_NOTIFICATION_URL: http://notification-service:8088
 
   compliance-service:
     <<: *service-defaults
@@ -158,6 +168,7 @@ services:
       <<: *common-env
       SERVER_PORT: 8088
       DB_URL: jdbc:postgresql://postgres:5432/agrichain_notification
+      JWT_SECRET: ${JWT_SECRET}
       SERVICES_IDENTITY_URL: http://identity-service:8081
 
   trader-service:
@@ -173,8 +184,10 @@ services:
       <<: *common-env
       SERVER_PORT: 8089
       DB_URL: jdbc:postgresql://postgres:5432/agrichain_trader
+      JWT_SECRET: ${JWT_SECRET}
       SERVICES_IDENTITY_URL: http://identity-service:8081
       SERVICES_CROP_URL: http://crop-service:8083
+      SERVICES_NOTIFICATION_URL: http://notification-service:8088
 
   frontend:
     build:
@@ -195,3 +208,4 @@ services:
 
 volumes:
   postgres_data:
+  farmer_documents:

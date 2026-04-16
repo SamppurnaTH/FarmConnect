@@ -14,4 +14,9 @@ import java.util.UUID;
 public interface TransactionRepository extends JpaRepository<Transaction, UUID> {
     Optional<Transaction> findByOrderId(UUID orderId);
     List<Transaction> findByStatusAndExpiresAtBefore(TransactionStatus status, Instant now);
+    List<Transaction> findByOrderIdIn(java.util.Collection<UUID> orderIds);
+
+    @org.springframework.data.jpa.repository.Query(
+        "SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t WHERE t.status = 'Settled'")
+    java.math.BigDecimal sumSettledAmount();
 }

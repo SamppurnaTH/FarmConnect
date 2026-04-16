@@ -69,7 +69,7 @@ public class AuthService {
         userRepository.save(user);
 
         UUID tokenId = UUID.randomUUID();
-        String token = jwtService.issue(user.getUsername(), tokenId);
+        String token = jwtService.issue(user.getUsername(), tokenId, user.getId(), user.getRole().name());
         tokenStore.store(tokenId, user.getUsername());
 
         Instant expiresAt = Instant.now().plusSeconds(jwtService.getExpiryMinutes() * 60);
@@ -119,7 +119,7 @@ public class AuthService {
         User user = userRepository.findByUsername(subject)
                 .orElseThrow(InvalidTokenException::new);
         UUID newTokenId = UUID.randomUUID();
-        String newToken = jwtService.issue(subject, newTokenId);
+        String newToken = jwtService.issue(subject, newTokenId, user.getId(), user.getRole().name());
         tokenStore.invalidate(oldTokenId);
         tokenStore.store(newTokenId, subject);
         Instant expiresAt = Instant.now().plusSeconds(jwtService.getExpiryMinutes() * 60);

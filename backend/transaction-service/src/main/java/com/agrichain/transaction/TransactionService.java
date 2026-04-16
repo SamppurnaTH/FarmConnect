@@ -8,10 +8,13 @@ import com.agrichain.transaction.entity.Payment;
 import com.agrichain.transaction.entity.Transaction;
 import com.agrichain.transaction.repository.PaymentRepository;
 import com.agrichain.transaction.repository.TransactionRepository;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,17 +24,20 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final PaymentRepository paymentRepository;
 
-    public TransactionService(TransactionRepository transactionRepository, PaymentRepository paymentRepository) {
+    public TransactionService(TransactionRepository transactionRepository,
+                              PaymentRepository paymentRepository) {
         this.transactionRepository = transactionRepository;
         this.paymentRepository = paymentRepository;
     }
 
+    // ── Create ────────────────────────────────────────────────────────────────
+
     /**
      * Requirement 9.1: Confirmed order creates a Transaction.
+     * Called internally by crop-service — no user JWT.
      */
     @Transactional
     public UUID createTransaction(TransactionRequest request) {
-        // Enforce uniqueness of transaction per order
         if (transactionRepository.findByOrderId(request.getOrderId()).isPresent()) {
             throw new IllegalStateException("Transaction already exists for order: " + request.getOrderId());
         }
@@ -40,13 +46,14 @@ public class TransactionService {
         transaction.setOrderId(request.getOrderId());
         transaction.setAmount(request.getAmount());
         transaction.setStatus(TransactionStatus.Pending_Payment);
-        
+
         return transactionRepository.save(transaction).getId();
     }
 
+    // ── Payment ───────────────────────────────────────────────────────────────
+
     /**
      * Requirement 10.1: Trader submits payment.
-     * Mocking gateway success for now.
      */
     @Transactional
     public UUID processPayment(PaymentRequest request) {
@@ -67,42 +74,61 @@ public class TransactionService {
         payment.setTransactionId(request.getTransactionId());
         payment.setMethod(request.getMethod());
         payment.setGatewayRef(request.getGatewayRef());
-        payment.setStatus(PaymentStatus.Completed); // Mock success
+        payment.setStatus(PaymentStatus.Completed); // Mock gateway success
 
-        // Requirement 10.2: Gateway success settles the transaction
         transaction.setStatus(TransactionStatus.Settled);
         transactionRepository.save(transaction);
 
         return paymentRepository.save(payment).getId();
     }
 
+    // ── Reads ─────────────────────────────────────────────────────────────────
+
     public Transaction getTransaction(UUID id) {
         return transactionRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Transaction not found: " + id));
     }
 
+    public List<Transaction> listTransactions() {
+        return transactionRepository.findAll();
+    }
+
     /**
-     * Requirement 10.5: Transaction auto-cancellation after 48h.
+     * Returns transactions whose orderId is in the provided set.
+     * Used to filter transactions for a specific farmer or trader.
      */
+    public List<Transaction> getTransactionsByOrderIds(Collection<UUID> orderIds) {
+        if (orderIds == null || orderIds.isEmpty()) return List.of();
+        return transactionRepository.findByOrderIdIn(orderIds);
+    }
+
+    /**
+     * Uses a SUM aggregate query — does NOT load all rows into memory.
+     */
+    public BigDecimal getTotalSettledValue() {
+        BigDecimal sum = transactionRepository.sumSettledAmount();
+        return sum != null ? sum : BigDecimal.ZERO;
+    }
+
+    // ── Scheduler ─────────────────────────────────────────────────────────────
+
+    /**
+     * Requirement 10.5: Auto-cancel transactions that have passed their 48h expiry.
+     * Runs every hour.
+     */
+    @Scheduled(fixedDelay = 3_600_000)
     @Transactional
     public void cancelExpiredTransactions() {
         List<Transaction> expired = transactionRepository.findByStatusAndExpiresAtBefore(
                 TransactionStatus.Pending_Payment, Instant.now());
-        
+
         for (Transaction t : expired) {
             t.setStatus(TransactionStatus.Cancelled);
             transactionRepository.save(t);
         }
-    }
 
-    public java.math.BigDecimal getTotalSettledValue() {
-        return transactionRepository.findAll().stream()
-                .filter(t -> t.getStatus() == TransactionStatus.Settled)
-                .map(Transaction::getAmount)
-                .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
-    }
-
-    public List<Transaction> listTransactions() {
-        return transactionRepository.findAll();
+        if (!expired.isEmpty()) {
+            System.out.println("[scheduler] Cancelled " + expired.size() + " expired transactions.");
+        }
     }
 }

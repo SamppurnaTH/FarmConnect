@@ -145,7 +145,7 @@ export interface CreateProgramRequest {
   budgetAmount: number;
 }
 
-export type DisbursementStatus = 'Pending' | 'Approved' | 'Disbursed' | 'Failed';
+export type DisbursementStatus = 'Pending' | 'Approved' | 'Rejected' | 'Disbursed' | 'Failed';
 
 export interface Disbursement {
   id: string;
@@ -156,6 +156,7 @@ export interface Disbursement {
   approvedBy?: string;
   approvedAt?: string;
   programCycle: string;
+  rejectionReason?: string;
 }
 
 export interface CreateDisbursementRequest {
@@ -245,6 +246,33 @@ export interface User {
   status: UserStatus;
 }
 
+// ─── Trader ───────────────────────────────────────────────────────────────────
+export interface TraderProfile {
+  id: string;
+  userId: string;
+  name: string;
+  organization?: string;
+  contactInfo: string;
+  status: UserStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TraderRegistrationRequest {
+  username: string;
+  password: string;
+  email: string;
+  name: string;
+  organization?: string;
+  contactInfo: string;
+}
+
+export interface UpdateTraderRequest {
+  name?: string;
+  organization?: string;
+  contactInfo?: string;
+}
+
 // ─── API Error ────────────────────────────────────────────────────────────────
 export interface ApiFieldError {
   field: string;
@@ -264,6 +292,14 @@ export interface Page<T> {
   totalPages: number;
   number: number;
   size: number;
+}
+
+export interface FarmerPageResponse {
+  content: FarmerProfile[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
 }
 
 // ─── Audit Log ────────────────────────────────────────────────────────────────

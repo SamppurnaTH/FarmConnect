@@ -1,9 +1,11 @@
 package com.agrichain.crop;
 
+import com.agrichain.common.enums.ListingStatus;
 import com.agrichain.crop.dto.ListingRequest;
 import com.agrichain.crop.entity.CropListing;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,9 +24,10 @@ public class ListingController {
 
     /**
      * POST /listings
-     * Farmer creates a listing.
+     * Farmer creates a listing. Farmer must be Active (verified by service layer).
      */
     @PostMapping
+    @PreAuthorize("hasRole('FARMER')")
     public ResponseEntity<UUID> createListing(@Valid @RequestBody ListingRequest request) {
         UUID id = cropListingService.createListing(request);
         return ResponseEntity.status(201).body(id);
@@ -32,24 +35,62 @@ public class ListingController {
 
     /**
      * GET /listings
-     * Search listings by location or farmerId.
+     * - ?farmerId= → all listings for that farmer (all statuses, farmer's own view)
+     * - ?location= → active listings matching location (trader browse)
+     * - no params  → all active listings
+     * Public endpoint — no auth required for browse.
      */
     @GetMapping
     public ResponseEntity<List<CropListing>> searchListings(
             @RequestParam(required = false) String location,
-            @RequestParam(required = false) java.util.UUID farmerId) {
-        return ResponseEntity.ok(cropListingService.searchListings(location, farmerId));
+            @RequestParam(required = false) UUID farmerId) {
+        return ResponseEntity.ok(cropListingService.searchListings(location, farmerId, false));
+    }
+
+    /**
+     * GET /listings/pending
+     * Returns all listings with Pending_Approval status.
+     * Market Officer only.
+     * Declared before /{id} to prevent Spring treating "pending" as a path variable.
+     */
+    @GetMapping("/pending")
+    @PreAuthorize("hasAnyRole('MARKET_OFFICER','ADMINISTRATOR')")
+    public ResponseEntity<List<CropListing>> getPendingListings() {
+        return ResponseEntity.ok(cropListingService.searchListings(null, null, true));
+    }
+
+    /**
+     * GET /listings/total-volume
+     * Internal — called by reporting-service. No auth required.
+     * Declared before /{id} to prevent Spring treating "total-volume" as a path variable.
+     */
+    @GetMapping("/total-volume")
+    public ResponseEntity<Long> getTotalVolume() {
+        return ResponseEntity.ok(cropListingService.getTotalActiveVolume());
+    }
+
+    /**
+     * GET /listings/{id}
+     * Single listing — public.
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<CropListing> getListing(@PathVariable UUID id) {
+        return cropListingService.getListing(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     /**
      * PUT /listings/{id}/status
-     * Market Officer approval/rejection.
+     * Market Officer approves or rejects a listing.
      */
     @PutMapping("/{id}/status")
-    public ResponseEntity<Void> updateStatus(@PathVariable UUID id, @RequestBody Map<String, String> statusRequest) {
-        com.agrichain.common.enums.ListingStatus status = com.agrichain.common.enums.ListingStatus.valueOf(
-                statusRequest.get("status"));
-        String reason = statusRequest.get("rejectionReason");
+    @PreAuthorize("hasRole('MARKET_OFFICER')")
+    public ResponseEntity<Void> updateStatus(
+            @PathVariable UUID id,
+            @RequestBody Map<String, String> body) {
+        ListingStatus status = parseEnum(ListingStatus.class, body.get("status"), "status");
+        String reason = body.get("rejectionReason");
         cropListingService.updateListingStatus(id, status, reason);
         return ResponseEntity.noContent().build();
     }
@@ -58,7 +99,7 @@ public class ListingController {
 
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<Map<String, String>> handleStateError(IllegalStateException ex) {
-        return ResponseEntity.status(403).body(Map.of("error", ex.getMessage()));
+        return ResponseEntity.status(422).body(Map.of("error", ex.getMessage()));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
@@ -66,19 +107,16 @@ public class ListingController {
         return ResponseEntity.status(400).body(Map.of("error", ex.getMessage()));
     }
 
-    /**
-     * GET /listings/{id}
-     * Get a single listing by ID.
-     */
-    @GetMapping("/{id}")
-    public ResponseEntity<CropListing> getListing(@PathVariable java.util.UUID id) {
-        return cropListingService.getListing(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
+    // ── Helpers ───────────────────────────────────────────────────────────────
 
-    @GetMapping("/total-volume")
-    public ResponseEntity<Long> getTotalVolume() {
-        return ResponseEntity.ok(cropListingService.getTotalActiveVolume());
+    private <E extends Enum<E>> E parseEnum(Class<E> cls, String value, String field) {
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException("Field '" + field + "' is required.");
+        }
+        try {
+            return Enum.valueOf(cls, value);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid value for '" + field + "': " + value);
+        }
     }
 }

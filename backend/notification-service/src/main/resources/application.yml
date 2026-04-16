@@ -22,3 +22,5 @@ server:
 agrichain:
   encryption:
     key: ${ENCRYPTION_KEY:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=}
+  jwt:
+    secret: ${JWT_SECRET:change-me-in-production-use-32chars}

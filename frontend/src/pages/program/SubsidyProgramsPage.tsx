@@ -27,11 +27,22 @@ const SubsidyProgramsPage: React.FC = () => {
   const handleCreate = async () => {
     const budget = Number(createForm.budgetAmount);
     if (!createForm.title || !createForm.startDate || !createForm.endDate || budget <= 0) {
-      showToast('All fields required', 'error');
+      showToast('All fields required. Budget must be greater than 0.', 'error');
+      return;
+    }
+    if (new Date(createForm.endDate) <= new Date(createForm.startDate)) {
+      showToast('End date must be after start date.', 'error');
       return;
     }
     try {
-      await subsidiesApi.createProgram({ ...createForm, budgetAmount: budget });
+      // Note: createdBy is extracted from JWT on the backend — not sent from frontend
+      await subsidiesApi.createProgram({
+        title:        createForm.title,
+        description:  createForm.description,
+        startDate:    createForm.startDate,
+        endDate:      createForm.endDate,
+        budgetAmount: budget,
+      });
       showToast('Program created', 'success');
       setShowCreate(false);
       setCreateForm({ title: '', description: '', startDate: '', endDate: '', budgetAmount: '' });
@@ -57,23 +68,30 @@ const SubsidyProgramsPage: React.FC = () => {
 
   const handleDisbursement = async (programId: string) => {
     const amount = Number(disbForm.amount);
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     if (!disbForm.farmerId || amount <= 0 || !disbForm.programCycle) {
       setDisbError('All fields are required.');
       return;
     }
+    if (!uuidRegex.test(disbForm.farmerId)) {
+      setDisbError('Farmer ID must be a valid UUID (e.g. 550e8400-e29b-41d4-a716-446655440000).');
+      return;
+    }
     try {
-      await subsidiesApi.createDisbursement({ 
-        programId, 
-        farmerId: disbForm.farmerId, 
-        amount: Number(disbForm.amount), 
-        programCycle: disbForm.programCycle 
+      await subsidiesApi.createDisbursement({
+        programId,
+        farmerId:     disbForm.farmerId,
+        amount:       Number(disbForm.amount),
+        programCycle: disbForm.programCycle,
       });
       showToast('Disbursement created', 'success');
       setDisbFormId(null);
       setDisbForm({ farmerId: '', amount: '', programCycle: '' });
+      setDisbError(null);
     } catch (err: unknown) {
       const status = (err as { response?: { status?: number } })?.response?.status;
-      if (status === 422) setDisbError('Disbursement amount exceeds remaining program budget.');
+      const msg    = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
+      if (status === 400 || status === 422) setDisbError(msg ?? 'Disbursement amount exceeds remaining program budget.');
       else setDisbError('Failed to create disbursement.');
     }
   };

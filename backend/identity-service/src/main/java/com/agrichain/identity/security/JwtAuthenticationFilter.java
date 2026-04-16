@@ -1,6 +1,6 @@
 package com.agrichain.identity.security;
 
-import com.agrichain.identity.repository.UserRepository;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -29,14 +29,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final TokenStore tokenStore;
-    private final UserRepository userRepository;
-
     public JwtAuthenticationFilter(JwtService jwtService, 
-                                   TokenStore tokenStore, 
-                                   UserRepository userRepository) {
+                                   TokenStore tokenStore) {
         this.jwtService = jwtService;
         this.tokenStore = tokenStore;
-        this.userRepository = userRepository;
     }
 
     @Override
@@ -63,16 +59,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 // Check if token is still active in the store (not logged out)
                 if (tokenStore.isActive(tokenId)) {
-                    // Load user from DB to get the LATEST role (satisfies "within 1 minute" requirement)
-                    userRepository.findByUsername(username).ifPresent(user -> {
-                        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                                user.getUsername(),
-                                null,
-                                List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
-                        );
-                        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                        SecurityContextHolder.getContext().setAuthentication(authToken);
-                    });
+                    String role = claims.get("role", String.class);
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            username,
+                            null,
+                            List.of(new SimpleGrantedAuthority("ROLE_" + role))
+                    );
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
         } catch (JwtException | IllegalArgumentException e) {

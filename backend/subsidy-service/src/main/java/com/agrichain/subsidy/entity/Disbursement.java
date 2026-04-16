@@ -43,6 +43,9 @@ public class Disbursement {
     @Column(name = "program_cycle", length = 50, nullable = false)
     private String programCycle;
 
+    @Column(name = "rejection_reason", columnDefinition = "text")
+    private String rejectionReason;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
@@ -88,6 +91,9 @@ public class Disbursement {
 
     public String getProgramCycle() { return programCycle; }
     public void setProgramCycle(String programCycle) { this.programCycle = programCycle; }
+
+    public String getRejectionReason() { return rejectionReason; }
+    public void setRejectionReason(String rejectionReason) { this.rejectionReason = rejectionReason; }
 
     public Instant getCreatedAt() { return createdAt; }
     public Instant getUpdatedAt() { return updatedAt; }

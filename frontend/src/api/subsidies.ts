@@ -31,6 +31,9 @@ export const subsidiesApi = {
   approveDisbursement: (id: string) =>
     apiClient.put<void>(`/subsidies/disbursements/${id}/approve`),
 
+  rejectDisbursement: (id: string, reason: string) =>
+    apiClient.put<void>(`/subsidies/disbursements/${id}/reject`, { reason }),
+
   getTotalDisbursed: () =>
     apiClient.get<number>('/subsidies/total-disbursed').then((r) => r.data),
 };

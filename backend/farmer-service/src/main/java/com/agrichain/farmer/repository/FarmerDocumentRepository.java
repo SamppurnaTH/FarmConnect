@@ -10,4 +10,5 @@ import java.util.UUID;
 @Repository
 public interface FarmerDocumentRepository extends JpaRepository<FarmerDocument, UUID> {
     List<FarmerDocument> findByFarmerId(UUID farmerId);
+    java.util.Optional<FarmerDocument> findByFarmerIdAndDocumentType(UUID farmerId, com.agrichain.farmer.entity.DocumentType documentType);
 }

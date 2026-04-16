@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { NavMenu } from '../../components/NavMenu';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { cropsApi } from '../../api/crops';
+import { farmersApi } from '../../api/farmers';
 import { useAuthStore } from '../../stores/authStore';
 import { useToast } from '../../components/ToastProvider';
 import { useIsOnline } from '../../components/ConnectivityBanner';
@@ -16,6 +17,7 @@ const MyListingsPage: React.FC = () => {
   const { showToast } = useToast();
   const isOnline = useIsOnline();
 
+  const [farmerId, setFarmerId] = useState<string | null>(null);
   const [listings, setListings] = useState<CropListing[]>([]);
   const [orders, setOrders] = useState<Record<string, Order[]>>({});
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -24,18 +26,30 @@ const MyListingsPage: React.FC = () => {
   const [form, setForm] = useState({ cropType: '', quantity: '', pricePerUnit: '', location: '' });
   const [formError, setFormError] = useState<string | null>(null);
 
-  const load = async () => {
-    if (!userId) return;
+  // Resolve farmer profile ID from JWT userId, then load listings
+  const load = async (resolvedFarmerId?: string) => {
+    const fid = resolvedFarmerId ?? farmerId;
+    if (!fid) return;
     setLoading(true);
     try {
-      const data = await cropsApi.getMyListings(userId);
+      const data = await cropsApi.getMyListings(fid);
       setListings(data);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => { load(); }, [userId]);
+  useEffect(() => {
+    if (!userId) return;
+    farmersApi.getMyProfile()
+      .then((profile) => {
+        setFarmerId(profile.id);
+        return cropsApi.getMyListings(profile.id);
+      })
+      .then(setListings)
+      .catch(() => showToast('Failed to load listings', 'error'))
+      .finally(() => setLoading(false));
+  }, [userId]);
 
   const loadOrders = async (listingId: string) => {
     try {
@@ -63,7 +77,7 @@ const MyListingsPage: React.FC = () => {
       showToast('Listing submitted for approval', 'success');
       setShowCreate(false);
       setForm({ cropType: '', quantity: '', pricePerUnit: '', location: '' });
-      load();
+      load(farmerId ?? undefined);
     } catch (err: unknown) {
       const status = (err as { response?: { status?: number } })?.response?.status;
       if (status === 422) {
@@ -79,7 +93,7 @@ const MyListingsPage: React.FC = () => {
       await cropsApi.acceptOrder(orderId);
       showToast('Order accepted', 'success');
       loadOrders(listingId);
-      load();
+      load(farmerId ?? undefined);
     } catch { showToast('Failed to accept order', 'error'); }
   };
 

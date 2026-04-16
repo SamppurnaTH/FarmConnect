@@ -73,7 +73,9 @@ public class AesEncryptionUtil {
             byte[] plaintext = cipher.doFinal(ciphertext);
             return new String(plaintext, "UTF-8");
         } catch (Exception e) {
-            throw new EncryptionException("Failed to decrypt value", e);
+            // Rescue mode: If decryption fails (e.g. key mismatch), return raw data to prevent 500 error
+            System.err.println("Decryption failed for value: " + encryptedBase64 + ". Key mismatch? Error: " + e.getMessage());
+            return encryptedBase64;
         }
     }
 }

@@ -35,15 +35,19 @@ public class JwtService {
      *
      * @param subject  the username
      * @param tokenId  a pre-generated UUID used as the JTI claim
+     * @param userId   the ID of the user
+     * @param role     the role of the user
      * @return signed compact JWT string
      */
-    public String issue(String subject, UUID tokenId) {
+    public String issue(String subject, UUID tokenId, UUID userId, String role) {
         Instant now = Instant.now();
         Instant expiry = now.plusSeconds(expiryMinutes * 60);
 
         return Jwts.builder()
                 .id(tokenId.toString())
                 .subject(subject)
+                .claim("userId", userId.toString())
+                .claim("role", role)
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(expiry))
                 .signWith(signingKey)

@@ -2,12 +2,15 @@ import React, { Suspense, lazy } from 'react';
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import { RouteGuard } from './RouteGuard';
 import { LoadingSpinner } from '../components/LoadingSpinner';
+import { useAuthStore } from '../stores/authStore';
 
 // ─── Lazy-loaded pages ────────────────────────────────────────────────────────
 const LoginPage                = lazy(() => import('../pages/LoginPage'));
 const FarmerRegistrationPage   = lazy(() => import('../pages/farmer/FarmerRegistrationPage'));
+const TraderRegistrationPage   = lazy(() => import('../pages/trader/TraderRegistrationPage'));
 const DashboardPage            = lazy(() => import('../pages/DashboardPage'));
 const FarmerProfilePage        = lazy(() => import('../pages/farmer/FarmerProfilePage'));
+const TraderProfilePage        = lazy(() => import('../pages/trader/TraderProfilePage'));
 const MyListingsPage           = lazy(() => import('../pages/farmer/MyListingsPage'));
 const FarmerOrdersPage         = lazy(() => import('../pages/farmer/FarmerOrdersPage'));
 const BrowseListingsPage       = lazy(() => import('../pages/trader/BrowseListingsPage'));
@@ -31,16 +34,26 @@ function G({ path, element }: { path: string; element: React.ReactNode }) {
   return <RouteGuard route={path}>{element}</RouteGuard>;
 }
 
+// ─── Role-aware profile router ────────────────────────────────────────────────
+// /profile serves different pages depending on the user's role
+function ProfileRouter() {
+  const { role } = useAuthStore();
+  if (role === 'Trader') return <TraderProfilePage />;
+  return <FarmerProfilePage />;
+}
+
 const router = createBrowserRouter([
   // Public
-  { path: '/login',    element: <Suspense fallback={<LoadingSpinner />}><LoginPage /></Suspense> },
-  { path: '/register', element: <Suspense fallback={<LoadingSpinner />}><FarmerRegistrationPage /></Suspense> },
-  { path: '/403',      element: <Suspense fallback={<LoadingSpinner />}><ForbiddenPage /></Suspense> },
-  { path: '/404',      element: <Suspense fallback={<LoadingSpinner />}><NotFoundPage /></Suspense> },
+  { path: '/login',            element: <Suspense fallback={<LoadingSpinner />}><LoginPage /></Suspense> },
+  { path: '/register',         element: <Suspense fallback={<LoadingSpinner />}><FarmerRegistrationPage /></Suspense> },
+  { path: '/register/trader',  element: <Suspense fallback={<LoadingSpinner />}><TraderRegistrationPage /></Suspense> },
+  { path: '/403',              element: <Suspense fallback={<LoadingSpinner />}><ForbiddenPage /></Suspense> },
+  { path: '/404',              element: <Suspense fallback={<LoadingSpinner />}><NotFoundPage /></Suspense> },
 
   // Authenticated + role-guarded
   { path: '/dashboard',        element: <Suspense fallback={<LoadingSpinner />}><G path="/dashboard"        element={<DashboardPage />} /></Suspense> },
-  { path: '/profile',          element: <Suspense fallback={<LoadingSpinner />}><G path="/profile"          element={<FarmerProfilePage />} /></Suspense> },
+  // /profile serves FarmerProfilePage for Farmer, TraderProfilePage for Trader
+  { path: '/profile',          element: <Suspense fallback={<LoadingSpinner />}><G path="/profile"          element={<ProfileRouter />} /></Suspense> },
   { path: '/farmers',          element: <Suspense fallback={<LoadingSpinner />}><G path="/farmers"          element={<FarmerManagementPage />} /></Suspense> },
   { path: '/listings/mine',    element: <Suspense fallback={<LoadingSpinner />}><G path="/listings/mine"    element={<MyListingsPage />} /></Suspense> },
   { path: '/listings/browse',  element: <Suspense fallback={<LoadingSpinner />}><G path="/listings/browse"  element={<BrowseListingsPage />} /></Suspense> },
