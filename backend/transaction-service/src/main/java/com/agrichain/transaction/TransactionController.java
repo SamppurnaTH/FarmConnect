@@ -96,6 +96,18 @@ public class TransactionController {
         return ResponseEntity.ok(transactionService.getTotalSettledValue());
     }
 
+    /**
+     * GET /transactions/report?start=&end=
+     * Internal — called by reporting-service to fetch transactions in a date range.
+     * No auth required (service-to-service).
+     */
+    @GetMapping("/report")
+    public ResponseEntity<List<Transaction>> getTransactionsForReport(
+            @RequestParam @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE) java.time.LocalDate start,
+            @RequestParam @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE) java.time.LocalDate end) {
+        return ResponseEntity.ok(transactionService.getTransactionsByDateRange(start, end));
+    }
+
     // ── Exception handlers ────────────────────────────────────────────────────
 
     @ExceptionHandler(IllegalStateException.class)

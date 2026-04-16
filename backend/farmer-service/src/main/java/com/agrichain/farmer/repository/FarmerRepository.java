@@ -39,4 +39,10 @@ public interface FarmerRepository extends JpaRepository<Farmer, UUID> {
 
     /** All farmers paginated (no status filter) */
     Page<Farmer> findAll(Pageable pageable);
+
+    /**
+     * Returns farmers registered within a date range.
+     * Used by reporting-service for scoped report generation.
+     */
+    List<Farmer> findByCreatedAtBetween(java.time.Instant start, java.time.Instant end);
 }

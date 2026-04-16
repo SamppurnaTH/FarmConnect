@@ -42,6 +42,8 @@ public class SecurityConfig {
                 .requestMatchers(org.springframework.http.HttpMethod.GET, "/farmers/*/status").permitAll()
                 // Internal: farmer count called by reporting-service
                 .requestMatchers(org.springframework.http.HttpMethod.GET, "/farmers/count").permitAll()
+                // Internal: farmer report called by reporting-service
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/farmers/report").permitAll()
                 // Everything else requires authentication
                 .anyRequest().authenticated()
             )

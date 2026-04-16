@@ -149,6 +149,18 @@ public class SubsidyController {
         return ResponseEntity.ok(subsidyService.getTotalDisbursed());
     }
 
+    /**
+     * GET /subsidies/disbursements/report?start=&end=
+     * Internal — called by reporting-service to fetch disbursements in a date range.
+     * No auth required (service-to-service).
+     */
+    @GetMapping("/disbursements/report")
+    public ResponseEntity<java.util.List<com.agrichain.subsidy.entity.Disbursement>> getDisbursementsForReport(
+            @RequestParam @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE) java.time.LocalDate start,
+            @RequestParam @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE) java.time.LocalDate end) {
+        return ResponseEntity.ok(subsidyService.getDisbursementsByDateRange(start, end));
+    }
+
     // ── Exception handlers ────────────────────────────────────────────────────
 
     @ExceptionHandler(IllegalStateException.class)

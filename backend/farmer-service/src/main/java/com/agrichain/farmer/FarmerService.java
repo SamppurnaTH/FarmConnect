@@ -168,6 +168,17 @@ public class FarmerService {
         return farmerRepository.countByStatus(status);
     }
 
+    /**
+     * Returns farmers registered within a date range.
+     * Used by reporting-service for scoped report generation.
+     */
+    public List<FarmerProfileResponse> getFarmersByDateRange(java.time.LocalDate start, java.time.LocalDate end) {
+        java.time.Instant from = start.atStartOfDay(java.time.ZoneOffset.UTC).toInstant();
+        java.time.Instant to   = end.plusDays(1).atStartOfDay(java.time.ZoneOffset.UTC).toInstant();
+        return farmerRepository.findByCreatedAtBetween(from, to)
+                .stream().map(FarmerProfileResponse::from).collect(Collectors.toList());
+    }
+
     public FarmerStatus getFarmerStatus(UUID farmerId) {
         return farmerRepository.findById(farmerId)
                 .map(Farmer::getStatus)

@@ -110,6 +110,16 @@ public class TransactionService {
         return sum != null ? sum : BigDecimal.ZERO;
     }
 
+    /**
+     * Returns transactions created within a date range.
+     * Used by reporting-service for scoped report generation.
+     */
+    public List<Transaction> getTransactionsByDateRange(java.time.LocalDate start, java.time.LocalDate end) {
+        java.time.Instant from = start.atStartOfDay(java.time.ZoneOffset.UTC).toInstant();
+        java.time.Instant to   = end.plusDays(1).atStartOfDay(java.time.ZoneOffset.UTC).toInstant();
+        return transactionRepository.findByCreatedAtBetween(from, to);
+    }
+
     // ── Scheduler ─────────────────────────────────────────────────────────────
 
     /**

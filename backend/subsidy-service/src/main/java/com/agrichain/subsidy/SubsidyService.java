@@ -201,6 +201,16 @@ public class SubsidyService {
         return sum != null ? sum : BigDecimal.ZERO;
     }
 
+    /**
+     * Returns disbursements created within a date range.
+     * Used by reporting-service for scoped report generation.
+     */
+    public List<Disbursement> getDisbursementsByDateRange(java.time.LocalDate start, java.time.LocalDate end) {
+        java.time.Instant from = start.atStartOfDay(java.time.ZoneOffset.UTC).toInstant();
+        java.time.Instant to   = end.plusDays(1).atStartOfDay(java.time.ZoneOffset.UTC).toInstant();
+        return disbursementRepository.findByCreatedAtBetween(from, to);
+    }
+
     // ── Private helpers ───────────────────────────────────────────────────────
 
     private void verifyFarmerIsActive(UUID farmerId) {

@@ -112,6 +112,18 @@ public class FarmerController {
     }
 
     /**
+     * GET /farmers/report?start=&end=
+     * Internal — called by reporting-service to fetch farmers registered in a date range.
+     * No auth required (service-to-service). Permitted without auth in SecurityConfig.
+     */
+    @GetMapping("/report")
+    public ResponseEntity<List<FarmerProfileResponse>> getFarmersForReport(
+            @RequestParam @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE) java.time.LocalDate start,
+            @RequestParam @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE) java.time.LocalDate end) {
+        return ResponseEntity.ok(farmerService.getFarmersByDateRange(start, end));
+    }
+
+    /**
      * GET /farmers/{id}/status
      * Returns the raw status string for a farmer.
      * Internal endpoint — called by crop-service and subsidy-service.

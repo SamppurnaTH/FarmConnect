@@ -39,6 +39,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // Internal: called by reporting-service without user JWT
                 .requestMatchers(HttpMethod.GET, "/subsidies/total-disbursed").permitAll()
+                // Internal: date-range disbursement report called by reporting-service
+                .requestMatchers(HttpMethod.GET, "/subsidies/disbursements/report").permitAll()
                 // Everything else requires authentication
                 .anyRequest().authenticated()
             )

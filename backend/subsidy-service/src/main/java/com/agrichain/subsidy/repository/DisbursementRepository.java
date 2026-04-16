@@ -14,4 +14,10 @@ public interface DisbursementRepository extends JpaRepository<Disbursement, UUID
      * Requirement 12.5: Ensure unique (farmer_id, program_id, program_cycle).
      */
     boolean existsByFarmerIdAndProgramIdAndProgramCycle(UUID farmerId, UUID programId, String programCycle);
+
+    /**
+     * Returns disbursements created within a date range (inclusive).
+     * Used by reporting-service for scoped report generation.
+     */
+    java.util.List<Disbursement> findByCreatedAtBetween(java.time.Instant start, java.time.Instant end);
 }

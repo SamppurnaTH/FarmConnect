@@ -19,4 +19,10 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
     @org.springframework.data.jpa.repository.Query(
         "SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t WHERE t.status = 'Settled'")
     java.math.BigDecimal sumSettledAmount();
+
+    /**
+     * Returns transactions created within a date range (inclusive).
+     * Used by reporting-service for scoped report generation.
+     */
+    List<Transaction> findByCreatedAtBetween(Instant start, Instant end);
 }

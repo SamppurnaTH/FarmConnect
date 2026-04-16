@@ -25,6 +25,7 @@ const ComplianceRecordsPage    = lazy(() => import('../pages/compliance/Complian
 const AuditsPage               = lazy(() => import('../pages/compliance/AuditsPage'));
 const AuditLogPage             = lazy(() => import('../pages/compliance/AuditLogPage'));
 const ReportsPage              = lazy(() => import('../pages/reports/ReportsPage'));
+const GovernmentAuditorPage    = lazy(() => import('../pages/reports/GovernmentAuditorPage'));
 const NotificationsPage        = lazy(() => import('../pages/shared/NotificationsPage'));
 const ForbiddenPage            = lazy(() => import('../pages/ForbiddenPage'));
 const NotFoundPage             = lazy(() => import('../pages/NotFoundPage'));
@@ -66,6 +67,7 @@ const router = createBrowserRouter([
   { path: '/compliance',       element: <Suspense fallback={<LoadingSpinner />}><G path="/compliance"       element={<ComplianceRecordsPage />} /></Suspense> },
   { path: '/audits',           element: <Suspense fallback={<LoadingSpinner />}><G path="/audits"           element={<AuditsPage />} /></Suspense> },
   { path: '/reports',          element: <Suspense fallback={<LoadingSpinner />}><G path="/reports"          element={<ReportsPage />} /></Suspense> },
+  { path: '/auditor',          element: <Suspense fallback={<LoadingSpinner />}><G path="/auditor"          element={<GovernmentAuditorPage />} /></Suspense> },
   { path: '/users',            element: <Suspense fallback={<LoadingSpinner />}><G path="/users"            element={<UserManagementPage />} /></Suspense> },
   { path: '/audit-log',        element: <Suspense fallback={<LoadingSpinner />}><G path="/audit-log"        element={<AuditLogPage />} /></Suspense> },
   { path: '/notifications',    element: <Suspense fallback={<LoadingSpinner />}><G path="/notifications"    element={<NotificationsPage />} /></Suspense> },

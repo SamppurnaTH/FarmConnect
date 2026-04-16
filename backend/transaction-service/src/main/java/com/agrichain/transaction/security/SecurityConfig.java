@@ -40,6 +40,8 @@ public class SecurityConfig {
                 // Internal service-to-service calls (no user JWT)
                 .requestMatchers(HttpMethod.POST, "/transactions").permitAll()
                 .requestMatchers(HttpMethod.GET, "/transactions/total-value").permitAll()
+                // Internal: date-range report called by reporting-service
+                .requestMatchers(HttpMethod.GET, "/transactions/report").permitAll()
                 // Everything else requires authentication
                 .anyRequest().authenticated()
             )
