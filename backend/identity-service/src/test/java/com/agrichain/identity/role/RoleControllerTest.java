@@ -70,7 +70,7 @@ class RoleControllerTest {
 
         when(roleService.assignRole(userId, UserRole.TRADER)).thenReturn(response);
 
-        Map<String, String> body = Map.of("role", "Trader");
+        Map<String, String> body = Map.of("role", "TRADER");
 
         mockMvc.perform(put("/roles/{userId}", userId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -78,7 +78,7 @@ class RoleControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(userId.toString()))
                 .andExpect(jsonPath("$.username").value("farmer1"))
-                .andExpect(jsonPath("$.role").value("Trader"))
+                .andExpect(jsonPath("$.role").value("TRADER"))
                 .andExpect(jsonPath("$.status").value("Active"));
     }
 
@@ -91,13 +91,13 @@ class RoleControllerTest {
 
         when(roleService.assignRole(userId, UserRole.ADMINISTRATOR)).thenReturn(response);
 
-        Map<String, String> body = Map.of("role", "Administrator");
+        Map<String, String> body = Map.of("role", "ADMINISTRATOR");
 
         mockMvc.perform(put("/roles/{userId}", userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(body)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.role").value("Administrator"));
+                .andExpect(jsonPath("$.role").value("ADMINISTRATOR"));
     }
 
     // ── Non-Administrator → 403 ───────────────────────────────────────────────
@@ -106,7 +106,7 @@ class RoleControllerTest {
     @WithMockUser(roles = "Farmer")
     void assignRole_asFarmer_returns403() throws Exception {
         UUID userId = UUID.randomUUID();
-        Map<String, String> body = Map.of("role", "Trader");
+        Map<String, String> body = Map.of("role", "TRADER");
 
         mockMvc.perform(put("/roles/{userId}", userId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -120,7 +120,7 @@ class RoleControllerTest {
     @WithMockUser(roles = "Trader")
     void assignRole_asTrader_returns403() throws Exception {
         UUID userId = UUID.randomUUID();
-        Map<String, String> body = Map.of("role", "Farmer");
+        Map<String, String> body = Map.of("role", "FARMER");
 
         mockMvc.perform(put("/roles/{userId}", userId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -134,7 +134,7 @@ class RoleControllerTest {
     @WithMockUser(roles = "Market_Officer")
     void assignRole_asMarketOfficer_returns403() throws Exception {
         UUID userId = UUID.randomUUID();
-        Map<String, String> body = Map.of("role", "Farmer");
+        Map<String, String> body = Map.of("role", "FARMER");
 
         mockMvc.perform(put("/roles/{userId}", userId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -153,7 +153,7 @@ class RoleControllerTest {
         when(roleService.assignRole(unknownId, UserRole.TRADER))
                 .thenThrow(new UserNotFoundException(unknownId));
 
-        Map<String, String> body = Map.of("role", "Trader");
+        Map<String, String> body = Map.of("role", "TRADER");
 
         mockMvc.perform(put("/roles/{userId}", unknownId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -182,7 +182,7 @@ class RoleControllerTest {
     @Test
     void assignRole_unauthenticated_returns403() throws Exception {
         UUID userId = UUID.randomUUID();
-        Map<String, String> body = Map.of("role", "Trader");
+        Map<String, String> body = Map.of("role", "TRADER");
 
         mockMvc.perform(put("/roles/{userId}", userId)
                         .contentType(MediaType.APPLICATION_JSON)
