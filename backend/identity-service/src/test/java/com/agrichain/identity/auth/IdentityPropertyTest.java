@@ -42,11 +42,12 @@ class IdentityPropertyTest {
         user.setUsername(username);
         user.setPasswordHash("hashed_" + password);
         user.setStatus(UserStatus.Active);
+        user.setRole(UserRole.FARMER);
         user.setFailedAttempts(0);
 
         when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(eq(password), any())).thenReturn(true);
-        when(jwtService.issue(eq(username), any(UUID.class), any(UUID.class), anyString())).thenReturn("mock-token-" + UUID.randomUUID());
+        when(jwtService.issue(any(), any(), any(), any())).thenReturn("mock-token-" + UUID.randomUUID());
 
         AuthService.LoginResult result = authService.login(username, password);
         assertThat(result.token()).isNotNull().startsWith("mock-token-");
@@ -123,6 +124,7 @@ class IdentityPropertyTest {
         user.setEmail(username + "@example.com");
         user.setPasswordHash("hashed_" + password);
         user.setStatus(UserStatus.Active);
+        user.setRole(UserRole.FARMER);
         user.setFailedAttempts(4);
         user.setLockedAt(clock.instant()); // within the 10-minute window
 

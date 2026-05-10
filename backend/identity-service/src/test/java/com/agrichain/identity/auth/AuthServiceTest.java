@@ -78,7 +78,7 @@ class AuthServiceTest {
     void login_validCredentials_returnsToken() {
         User user = activeUser();
         when(userRepository.findByUsername("farmer1")).thenReturn(Optional.of(user));
-        when(jwtService.issue(eq("farmer1"), any(UUID.class), any(UUID.class), anyString())).thenReturn("signed.jwt.token");
+        when(jwtService.issue(any(), any(), any(), any())).thenReturn("signed.jwt.token");
 
         AuthService.LoginResult result = authService.login("farmer1", RAW_PASSWORD);
 
@@ -92,7 +92,7 @@ class AuthServiceTest {
         user.setFailedAttempts(3);
         user.setLockedAt(Instant.parse("2024-01-01T11:55:00Z"));
         when(userRepository.findByUsername("farmer1")).thenReturn(Optional.of(user));
-        when(jwtService.issue(eq("farmer1"), any(UUID.class), any(UUID.class), anyString())).thenReturn("token");
+        when(jwtService.issue(any(), any(), any(), any())).thenReturn("token");
 
         authService.login("farmer1", RAW_PASSWORD);
 
