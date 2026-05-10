@@ -27,7 +27,10 @@ The current agricultural landscape suffers from:
 | **Farmers** | List crops, manage profiles, apply for subsidies, and track payments. |
 | **Traders** | Discover produce, place bids, execute secure trades, and manage logistics. |
 | **Market Officers** | Verify farmer identities, review land documents, and approve subsidy grants. |
-| **Administrators** | System oversight, role management, and security audit monitoring. |
+| **Compliance Officers**| Ensure all marketplace activities adhere to regional agricultural laws. |
+| **Gov. Auditors** | High-level oversight of grant disbursements and system integrity. |
+| **Program Managers** | Design and manage subsidy initiatives and market programs. |
+| **Administrators** | System infrastructure oversight, security audit, and user role management. |
 
 ---
 

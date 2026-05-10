@@ -90,6 +90,9 @@ docker-compose up -d --build
 | **Farmer** | `farmer_demo` | `Farm@1234` |
 | **Trader** | `trader_demo` | `Trade@1234` |
 | **Market Officer** | `officer_demo` | `Officer@1234` |
+| **Compliance Officer** | `compliance_demo` | `Comp@1234` |
+| **Government Auditor** | `auditor_demo` | `Audit@1234` |
+| **Program Manager** | `manager_demo` | `Manager@1234` |
 
 ---
 
