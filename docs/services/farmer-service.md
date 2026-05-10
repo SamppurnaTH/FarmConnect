@@ -1,39 +1,45 @@
-# Farmer Service
+# Farmer Service: Producer Lifecycle Management
 
-The **Farmer Service** manages the lifecycle of farmer profiles, from registration and KYC document verification to land detail management.
+The **Farmer Service** is the primary domain service for managing the 5,000+ farmers in the FarmConnect ecosystem. It handles everything from digital onboarding to complex land verification workflows.
 
-## 🌾 Core Responsibilities
-- **Profile Management**: CRUD operations for farmer personal and land details.
-- **KYC & Documents**: Secure storage and verification of identification and land ownership documents.
-- **Verification Workflow**: Integration with identity and notification services for status updates.
-- **Data Privacy**: AES-256 encryption of sensitive personal information (PII).
+## 🌾 Domain Business Logic
 
-## 📡 API Endpoints
+### 1. Multi-Step Onboarding
+Farmer registration is a coordinated process between the **Farmer Service** and **Identity Service**:
+1. User submits profile data + credentials.
+2. Farmer Service calls Identity Service to create a `FARMER` account.
+3. On success, a local `Farmer` profile is created with status `PENDING_VERIFICATION`.
+4. A notification is triggered to the Market Officer for KYC review.
 
-### Registration & Profile
-| Method | Endpoint | Description | Auth Required |
+### 2. KYC & Document Verification
+Farmers must upload two types of documents:
+- **Identification**: National ID, Passport, or Voter ID.
+- **Land Ownership**: Deeds, Tax Receipts, or Surveyor Reports.
+- **Verification Logic**: Only a `MARKET_OFFICER` can transition a farmer to `VERIFIED` status after reviewing these documents in the Officer Dashboard.
+
+### 3. PII Security (Encryption)
+To comply with data protection regulations, sensitive fields are encrypted at rest using **AES-256 GCM**:
+- `Name`, `Date of Birth`, `Address`, and `Contact Info` are encrypted/decrypted transparently via JPA Attribute Converters.
+
+## 📡 API Specification
+
+### Farmer Profiles
+- **`GET /farmers/me`**: Context-aware profile retrieval. Automatically identifies the logged-in farmer via JWT.
+- **`GET /farmers/{id}`**: Detailed view for Officers.
+- **`GET /farmers?status=&search=`**: Paginated list for administrative oversight.
+
+### Document Management System
+| Endpoint | Method | Input | Purpose |
 | :--- | :--- | :--- | :--- |
-| `POST` | `/farmers/register` | Register a new farmer and create identity. | No |
-| `GET` | `/farmers/{id}` | Retrieve farmer profile by ID. | Yes |
-| `PUT` | `/farmers/{id}` | Update farmer profile details. | Yes (Owner/Admin) |
-| `GET` | `/farmers/user/{userId}` | Lookup farmer by identity user ID. | Yes |
+| `/farmers/{id}/documents/upload` | `POST` | `MultipartFile` | Uploads binary to secure local storage. |
+| `/farmers/{id}/documents/{docId}/verify` | `PUT` | `{"status", "reason"}` | Updates verification status. Triggers notification to farmer. |
 
-### Document Management
-| Method | Endpoint | Description | Auth Required |
-| :--- | :--- | :--- | :--- |
-| `POST` | `/farmers/{id}/documents` | Upload KYC/Land document (Multipart). | Yes (Owner) |
-| `GET` | `/farmers/{id}/documents` | List metadata for all documents. | Yes |
-| `GET` | `/farmers/{id}/documents/{docId}` | Download specific document file. | Yes |
-| `PUT` | `/farmers/{id}/documents/{docId}/verify` | Verify or reject a document. | Yes (Officer) |
+## 🛡️ Resilience & Fault Tolerance
+The service integrates **Resilience4j** to handle downstream dependencies:
+- **Circuit Breaker**: If Identity Service is down, registration attempts are gracefully rejected with a "Service Temporarily Unavailable" message instead of timing out.
+- **Retries**: Automatic retries for Notification Service calls to ensure farmers receive their status updates even during brief network blips.
 
-## 🛠️ Configuration
-- **Database**: PostgreSQL (`agrichain_farmer`)
-- **Storage**: Local filesystem (Docker volume mapped)
-- **Encryption**: AES-256 for PII
-- **Resilience**: Resilience4j Circuit Breakers for Identity Service calls
-- **Port**: `8082`
-
-## 🔗 Dependencies
-- `identity-service`: User account creation
-- `notification-service`: Status update alerts
-- `eureka-service`: Discovery
+## 🛠️ Infrastructure
+- **Storage**: Documents are stored in a dedicated Docker Volume (`farmer_documents`) to persist across container restarts.
+- **Database**: PostgreSQL (`agrichain_farmer`).
+- **Encryption Key**: Managed via the `ENCRYPTION_KEY` environment variable.

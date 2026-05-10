@@ -5,11 +5,65 @@ spring:
     gateway:
       discovery:
         locator:
-          enabled: true          # Enables discovery client integration (Eureka)
-          lower-case-service-id: true
+          enabled: false          # Disable automatic routing for better control
       httpclient:
         connect-timeout: 5000
         response-timeout: 30s
+      routes:
+        - id: identity-service
+          uri: lb://identity-service
+          predicates:
+            - Path=/api/auth/**, /api/roles/**, /api/audit-log/**
+          filters:
+            - StripPrefix=1
+        - id: farmer-service
+          uri: lb://farmer-service
+          predicates:
+            - Path=/api/farmers, /api/farmers/**
+          filters:
+            - StripPrefix=1
+        - id: crop-service
+          uri: lb://crop-service
+          predicates:
+            - Path=/api/crops, /api/crops/**
+          filters:
+            - StripPrefix=1
+        - id: transaction-service
+          uri: lb://transaction-service
+          predicates:
+            - Path=/api/transactions, /api/transactions/**
+          filters:
+            - StripPrefix=1
+        - id: subsidy-service
+          uri: lb://subsidy-service
+          predicates:
+            - Path=/api/subsidies, /api/subsidies/**
+          filters:
+            - StripPrefix=1
+        - id: compliance-service
+          uri: lb://compliance-service
+          predicates:
+            - Path=/api/compliance, /api/compliance/**
+          filters:
+            - StripPrefix=1
+        - id: reporting-service
+          uri: lb://reporting-service
+          predicates:
+            - Path=/api/reports, /api/reports/**
+          filters:
+            - StripPrefix=1
+        - id: notification-service
+          uri: lb://notification-service
+          predicates:
+            - Path=/api/notifications, /api/notifications/**
+          filters:
+            - StripPrefix=1
+        - id: trader-service
+          uri: lb://trader-service
+          predicates:
+            - Path=/api/traders, /api/traders/**
+          filters:
+            - StripPrefix=1
 
 server:
   port: ${SERVER_PORT:8080}
