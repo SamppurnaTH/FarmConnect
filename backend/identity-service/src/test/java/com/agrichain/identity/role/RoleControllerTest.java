@@ -66,9 +66,9 @@ class RoleControllerTest {
     void assignRole_asAdministrator_returns200WithUpdatedUser() throws Exception {
         UUID userId = UUID.randomUUID();
         RoleAssignmentResponse response = new RoleAssignmentResponse(
-                userId, "farmer1", UserRole.Trader, UserStatus.Active, Instant.now());
+                userId, "farmer1", UserRole.TRADER, UserStatus.Active, Instant.now());
 
-        when(roleService.assignRole(userId, UserRole.Trader)).thenReturn(response);
+        when(roleService.assignRole(userId, UserRole.TRADER)).thenReturn(response);
 
         Map<String, String> body = Map.of("role", "Trader");
 
@@ -87,9 +87,9 @@ class RoleControllerTest {
     void assignRole_asAdministrator_canAssignAdministratorRole() throws Exception {
         UUID userId = UUID.randomUUID();
         RoleAssignmentResponse response = new RoleAssignmentResponse(
-                userId, "user1", UserRole.Administrator, UserStatus.Active, Instant.now());
+                userId, "user1", UserRole.ADMINISTRATOR, UserStatus.Active, Instant.now());
 
-        when(roleService.assignRole(userId, UserRole.Administrator)).thenReturn(response);
+        when(roleService.assignRole(userId, UserRole.ADMINISTRATOR)).thenReturn(response);
 
         Map<String, String> body = Map.of("role", "Administrator");
 
@@ -150,7 +150,7 @@ class RoleControllerTest {
     @WithMockUser(roles = "Administrator")
     void assignRole_unknownUserId_returns404() throws Exception {
         UUID unknownId = UUID.randomUUID();
-        when(roleService.assignRole(unknownId, UserRole.Trader))
+        when(roleService.assignRole(unknownId, UserRole.TRADER))
                 .thenThrow(new UserNotFoundException(unknownId));
 
         Map<String, String> body = Map.of("role", "Trader");

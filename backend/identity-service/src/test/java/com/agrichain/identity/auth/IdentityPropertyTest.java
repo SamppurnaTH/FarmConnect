@@ -46,7 +46,7 @@ class IdentityPropertyTest {
 
         when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(eq(password), any())).thenReturn(true);
-        when(jwtService.issue(eq(username), any(UUID.class))).thenReturn("mock-token-" + UUID.randomUUID());
+        when(jwtService.issue(eq(username), any(UUID.class), any(UUID.class), anyString())).thenReturn("mock-token-" + UUID.randomUUID());
 
         AuthService.LoginResult result = authService.login(username, password);
         assertThat(result.token()).isNotNull().startsWith("mock-token-");
@@ -148,8 +148,8 @@ class IdentityPropertyTest {
     // Feature: agri-chain, Property 5: RBAC rejects unauthorized access
     @Property(tries = 40)
     void rbacRejectsUnauthorized(@ForAll UserRole role) {
-        if (role == UserRole.Farmer) {
-            assertThat(role).isNotEqualTo(UserRole.Government_Auditor);
+        if (role == UserRole.FARMER) {
+            assertThat(role).isNotEqualTo(UserRole.GOVERNMENT_AUDITOR);
         }
     }
 

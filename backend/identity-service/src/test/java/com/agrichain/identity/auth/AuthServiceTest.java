@@ -67,7 +67,7 @@ class AuthServiceTest {
         u.setUsername("farmer1");
         u.setPasswordHash(encodedPassword);
         u.setStatus(UserStatus.Active);
-        u.setRole(UserRole.Farmer);
+        u.setRole(UserRole.FARMER);
         u.setEmail("farmer@example.com");
         return u;
     }
@@ -78,12 +78,12 @@ class AuthServiceTest {
     void login_validCredentials_returnsToken() {
         User user = activeUser();
         when(userRepository.findByUsername("farmer1")).thenReturn(Optional.of(user));
-        when(jwtService.issue(eq("farmer1"), any(UUID.class))).thenReturn("signed.jwt.token");
+        when(jwtService.issue(eq("farmer1"), any(UUID.class), any(UUID.class), anyString())).thenReturn("signed.jwt.token");
 
         AuthService.LoginResult result = authService.login("farmer1", RAW_PASSWORD);
 
         assertThat(result.token()).isEqualTo("signed.jwt.token");
-        verify(tokenStore).store(any(UUID.class), eq("farmer1"));
+        verify(tokenStore).store(any(UUID.class), eq("farmer1"), anyLong());
     }
 
     @Test
@@ -92,7 +92,7 @@ class AuthServiceTest {
         user.setFailedAttempts(3);
         user.setLockedAt(Instant.parse("2024-01-01T11:55:00Z"));
         when(userRepository.findByUsername("farmer1")).thenReturn(Optional.of(user));
-        when(jwtService.issue(eq("farmer1"), any(UUID.class))).thenReturn("token");
+        when(jwtService.issue(eq("farmer1"), any(UUID.class), any(UUID.class), anyString())).thenReturn("token");
 
         authService.login("farmer1", RAW_PASSWORD);
 
@@ -305,11 +305,11 @@ class AuthServiceTest {
 
         User user = new User();
         user.setId(UUID.randomUUID());
-        user.setRole(UserRole.Farmer);
+        user.setRole(UserRole.FARMER);
 
         when(jwtService.parse("old.token")).thenReturn(claims);
         when(tokenStore.isActive(oldId)).thenReturn(true);
-        when(jwtService.issue(eq("farmer1"), any(UUID.class))).thenReturn("new.token");
+        when(jwtService.issue(eq("farmer1"), any(UUID.class), any(UUID.class), anyString())).thenReturn("new.token");
         when(jwtService.getExpiryMinutes()).thenReturn(30L);
         when(userRepository.findByUsername("farmer1")).thenReturn(Optional.of(user));
 
@@ -317,7 +317,7 @@ class AuthServiceTest {
 
         assertThat(result.token()).isEqualTo("new.token");
         verify(tokenStore).invalidate(oldId);
-        verify(tokenStore).store(any(UUID.class), eq("farmer1"));
+        verify(tokenStore).store(any(UUID.class), eq("farmer1"), anyLong());
     }
 
     @Test
@@ -331,7 +331,7 @@ class AuthServiceTest {
         assertThatThrownBy(() -> authService.refresh("old.token"))
                 .isInstanceOf(InvalidTokenException.class);
 
-        verify(jwtService, never()).issue(any(), any());
+        verify(jwtService, never()).issue(any(), any(), any(), any());
         verify(tokenStore, never()).invalidate(any());
     }
 

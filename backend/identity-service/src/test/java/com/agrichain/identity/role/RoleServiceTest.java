@@ -37,7 +37,7 @@ class RoleServiceTest {
         User u = new User();
         u.setId(id);
         u.setUsername("farmer1");
-        u.setRole(UserRole.Farmer);
+        u.setRole(UserRole.FARMER);
         u.setStatus(UserStatus.Active);
         u.setEmail("farmer@example.com");
         u.setPasswordHash("hashed");
@@ -53,11 +53,11 @@ class RoleServiceTest {
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        RoleAssignmentResponse response = roleService.assignRole(userId, UserRole.Trader);
+        RoleAssignmentResponse response = roleService.assignRole(userId, UserRole.TRADER);
 
         assertThat(response.getId()).isEqualTo(userId);
         assertThat(response.getUsername()).isEqualTo("farmer1");
-        assertThat(response.getRole()).isEqualTo(UserRole.Trader);
+        assertThat(response.getRole()).isEqualTo(UserRole.TRADER);
         assertThat(response.getStatus()).isEqualTo(UserStatus.Active);
     }
 
@@ -68,11 +68,11 @@ class RoleServiceTest {
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        roleService.assignRole(userId, UserRole.Market_Officer);
+        roleService.assignRole(userId, UserRole.MARKET_OFFICER);
 
         ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
         verify(userRepository).save(captor.capture());
-        assertThat(captor.getValue().getRole()).isEqualTo(UserRole.Market_Officer);
+        assertThat(captor.getValue().getRole()).isEqualTo(UserRole.MARKET_OFFICER);
     }
 
     @Test
@@ -82,9 +82,9 @@ class RoleServiceTest {
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        RoleAssignmentResponse response = roleService.assignRole(userId, UserRole.Administrator);
+        RoleAssignmentResponse response = roleService.assignRole(userId, UserRole.ADMINISTRATOR);
 
-        assertThat(response.getRole()).isEqualTo(UserRole.Administrator);
+        assertThat(response.getRole()).isEqualTo(UserRole.ADMINISTRATOR);
     }
 
     @Test
@@ -108,7 +108,7 @@ class RoleServiceTest {
         UUID unknownId = UUID.randomUUID();
         when(userRepository.findById(unknownId)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> roleService.assignRole(unknownId, UserRole.Trader))
+        assertThatThrownBy(() -> roleService.assignRole(unknownId, UserRole.TRADER))
                 .isInstanceOf(UserNotFoundException.class)
                 .hasMessageContaining(unknownId.toString());
 

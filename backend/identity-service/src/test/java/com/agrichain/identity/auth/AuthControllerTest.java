@@ -65,7 +65,7 @@ class AuthControllerTest {
     void login_validCredentials_returns200WithToken() throws Exception {
         AuthService.LoginResult result = new AuthService.LoginResult(
                 "signed.jwt.token",
-                com.agrichain.common.enums.UserRole.Farmer,
+                com.agrichain.common.enums.UserRole.FARMER,
                 java.util.UUID.randomUUID(),
                 java.time.Instant.now().plusSeconds(1800));
         when(authService.login("farmer1", "secret123")).thenReturn(result);
@@ -182,7 +182,7 @@ class AuthControllerTest {
     void refresh_validToken_returns200WithNewToken() throws Exception {
         AuthService.LoginResult result = new AuthService.LoginResult(
                 "new.jwt.token",
-                com.agrichain.common.enums.UserRole.Farmer,
+                com.agrichain.common.enums.UserRole.FARMER,
                 java.util.UUID.randomUUID(),
                 java.time.Instant.now().plusSeconds(1800));
         when(authService.refresh("old.jwt.token")).thenReturn(result);
