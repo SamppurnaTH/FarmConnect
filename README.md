@@ -92,5 +92,10 @@ docker-compose up -d --build
 | **Market Officer** | `officer_demo` | `Officer@1234` |
 
 ---
+
+## 📄 License
+This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
+
+---
 © 2026 FarmConnect Platform - Bridging the Digital Divide in Agriculture.
 Developed with ❤️ by **SamppurnaTH**.
