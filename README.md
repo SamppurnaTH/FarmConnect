@@ -11,12 +11,18 @@
 
 ---
 
+## 👨‍💻 Developed By
+**SamppurnaTH** - *Lead Architect & Developer*
+
+---
+
 ## ✨ Key Value Propositions
 
-- **Transparency**: End-to-end traceability of agricultural produce from farm to market.
-- **Efficiency**: Automated subsidy allocation and eligibility verification using institutional data.
-- **Scalability**: Cloud-native microservices architecture capable of handling high-concurrency transactions.
-- **Security**: Robust identity management and audit trails for every stakeholder interaction.
+- **🚀 Transparency**: End-to-end traceability of agricultural produce from farm to market.
+- **💰 Efficiency**: Automated subsidy allocation and eligibility verification using institutional data.
+- **🌐 Scalability**: Cloud-native microservices architecture capable of handling high-concurrency transactions.
+- **🛡️ Security**: Robust identity management (RBAC), JWT authentication, and audit trails for every interaction.
+- **📉 Reliability**: Built-in fault tolerance with **Resilience4j** (Circuit Breakers & Retries).
 
 ---
 
@@ -39,6 +45,7 @@ The ecosystem comprises specialized Spring Boot microservices, coordinated via a
 | **Assurance** | `compliance-service` | Automated Verification, Regulatory Checkpoints |
 | **Intelligence** | `reporting-service` | KPI Dashboards, Market Analytics, PDF/JSON Reports |
 | **Engagement** | `notification-service` | Multi-channel Alerts, Event-driven Status Updates |
+| **Trade Ops** | `trader-service` | Trader Profile Management, Procurement Tracking |
 
 ---
 
@@ -46,11 +53,13 @@ The ecosystem comprises specialized Spring Boot microservices, coordinated via a
 
 | Component | Technologies |
 | :--- | :--- |
-| **Core Framework** | Java 17, Spring Boot 3.2.5, Spring Cloud Netflix |
-| **Persistence Layer** | PostgreSQL 15, Spring Data JPA |
-| **Frontend Ecosystem** | React 18, TypeScript, Vite, Tailwind CSS, Lucide |
-| **Security Architecture** | JWT, BCrypt, Spring Security |
-| **Infrastructure** | Docker Engine, Docker Compose, Nginx Proxy |
+| **Core Framework** | Java 17, Spring Boot 3.2.5, Spring Cloud Netflix (Eureka) |
+| **Persistence Layer** | PostgreSQL 15, Redis 7 (Caching & Tokens), Spring Data JPA |
+| **Frontend Ecosystem** | React 18, TypeScript, Vite, Tailwind CSS, Lucide Icons |
+| **Security Architecture** | JWT (JSON Web Tokens), BCrypt Hashing, Spring Security |
+| **Resilience** | Resilience4j (Circuit Breaker, Retry, Rate Limiter) |
+| **Observability** | Logback with Logstash JSON encoding, Micrometer Tracing |
+| **Infrastructure** | Docker Engine, Docker Compose, Flyway (DB Migration) |
 | **DevOps** | GitHub Actions, GHCR (GitHub Container Registry) |
 
 ---
@@ -64,25 +73,36 @@ The ecosystem comprises specialized Spring Boot microservices, coordinated via a
 
 ### Deployment Workflow
 
-1.  **Build Services**:
+1.  **Configure Environment**:
     ```bash
-    cd backend
-    mvn clean package -DskipTests
+    cp .env.example .env
+    # Update .env with your specific keys
     ```
 
-2.  **Launch Ecosystem**:
+2.  **Launch Ecosystem (Docker)**:
     ```bash
     docker-compose up -d --build
     ```
 
-3.  **Access Points**:
-    - **Web Portal**: [http://localhost:80](http://localhost:80)
-    - **API Gateway**: [http://localhost:8080](http://localhost:8080)
-    - **Service Registry**: [http://localhost:8761](http://localhost:8761)
+3.  **Local Development (Optional)**:
+    If you wish to run services locally without Docker, ensure Postgres and Redis are running, then:
+    ```bash
+    cd backend
+    mvn clean install -DskipTests
+    # Start individual services using:
+    # java -jar <service-name>/target/*.jar
+    ```
+
+### Access Points
+- **Web Portal**: [http://localhost:80](http://localhost:80)
+- **API Gateway**: [http://localhost:8080](http://localhost:8080)
+- **Service Registry**: [http://localhost:8761](http://localhost:8761)
 
 ---
 
 ## 🔑 Demo Credentials
+
+The application comes pre-seeded with demo accounts for testing:
 
 | Role | Username | Password |
 | :--- | :--- | :--- |
@@ -95,6 +115,8 @@ The ecosystem comprises specialized Spring Boot microservices, coordinated via a
 
 ## 📈 Strategic Roadmap
 
+- [x] **Core Microservices Architecture**: Foundation for scalability.
+- [x] **Identity & Role Management**: Secure access control.
 - [ ] **Blockchain Integration**: Immutable trade tracking via Hyperledger Fabric.
 - [ ] **AI Forecasting**: Predictive algorithms for regional crop yield.
 - [ ] **IoT Connectivity**: Real-time soil and weather telemetry integration.
@@ -107,3 +129,4 @@ This project is licensed under the **MIT Enterprise License**.
 
 ---
 © 2026 FarmConnect Platform - Bridging the Digital Divide in Agriculture.
+Developed with ❤️ by **SamppurnaTH**.
