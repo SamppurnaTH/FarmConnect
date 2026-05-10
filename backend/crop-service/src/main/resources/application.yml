@@ -19,6 +19,42 @@ spring:
 server:
   port: ${SERVER_PORT:8083}
 
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URI:http://localhost:8761}/eureka/
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+    tags:
+      application: crop-service
+
+resilience4j:
+  retry:
+    instances:
+      farmerService:
+        maxAttempts: 3
+        waitDuration: 500ms
+      notificationService:
+        maxAttempts: 3
+        waitDuration: 1s
+  circuitbreaker:
+    instances:
+      farmerService:
+        failureRateThreshold: 50
+        slidingWindowSize: 10
+        waitDurationInOpenState: 10s
+
 agrichain:
   encryption:
     key: ${ENCRYPTION_KEY:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=}

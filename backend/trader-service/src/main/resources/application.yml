@@ -19,6 +19,49 @@ spring:
 server:
   port: ${SERVER_PORT:8089}
 
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URI:http://localhost:8761}/eureka/
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+    tags:
+      application: trader-service
+
+resilience4j:
+  retry:
+    instances:
+      identityService:
+        maxAttempts: 3
+        waitDuration: 500ms
+      cropService:
+        maxAttempts: 3
+        waitDuration: 500ms
+      notificationService:
+        maxAttempts: 3
+        waitDuration: 1s
+  circuitbreaker:
+    instances:
+      identityService:
+        failureRateThreshold: 50
+        slidingWindowSize: 10
+        waitDurationInOpenState: 10s
+      cropService:
+        failureRateThreshold: 50
+        slidingWindowSize: 10
+        waitDurationInOpenState: 10s
+
 agrichain:
   encryption:
     key: ${ENCRYPTION_KEY:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=}

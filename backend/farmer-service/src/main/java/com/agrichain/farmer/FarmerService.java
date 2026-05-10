@@ -1,5 +1,6 @@
 package com.agrichain.farmer;
 
+import com.agrichain.common.crypto.EncryptedStringConverter;
 import com.agrichain.common.enums.FarmerStatus;
 import com.agrichain.common.enums.UserRole;
 import com.agrichain.common.enums.VerificationStatus;
@@ -15,11 +16,10 @@ import com.agrichain.farmer.repository.FarmerRepository;
 import com.agrichain.farmer.repository.FarmerDocumentRepository;
 import com.agrichain.farmer.storage.FileStorageService;
 import com.agrichain.farmer.storage.FileStorageException;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.multipart.MultipartFile;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
@@ -61,6 +61,8 @@ public class FarmerService {
     // ── Registration ──────────────────────────────────────────────────────────
 
     @Transactional
+    @CircuitBreaker(name = "identityService", fallbackMethod = "registrationFallback")
+    @Retry(name = "identityService")
     public UUID registerFarmer(FarmerRegistrationRequest request) {
         if (farmerRepository.existsByContactInfoAndStatusIn(request.getContactInfo(),
                 List.of(FarmerStatus.Active, FarmerStatus.Pending_Verification))) {
@@ -80,6 +82,13 @@ public class FarmerService {
         farmer.setStatus(FarmerStatus.Pending_Verification);
 
         return farmerRepository.save(farmer).getId();
+    }
+
+    /**
+     * Fallback when identity-service is unreachable during farmer registration.
+     */
+    private UUID registrationFallback(FarmerRegistrationRequest request, Throwable t) {
+        throw new RuntimeException("Registration service is temporarily unavailable. Please try again.", t);
     }
 
     // ── Reads ─────────────────────────────────────────────────────────────────

@@ -70,7 +70,7 @@ public class AuthService {
 
         UUID tokenId = UUID.randomUUID();
         String token = jwtService.issue(user.getUsername(), tokenId, user.getId(), user.getRole().name());
-        tokenStore.store(tokenId, user.getUsername());
+        tokenStore.store(tokenId, user.getUsername(), jwtService.getExpiryMinutes() - 2);
 
         Instant expiresAt = Instant.now().plusSeconds(jwtService.getExpiryMinutes() * 60);
         return new LoginResult(token, user.getRole(), user.getId(), expiresAt);
@@ -121,7 +121,7 @@ public class AuthService {
         UUID newTokenId = UUID.randomUUID();
         String newToken = jwtService.issue(subject, newTokenId, user.getId(), user.getRole().name());
         tokenStore.invalidate(oldTokenId);
-        tokenStore.store(newTokenId, subject);
+        tokenStore.store(newTokenId, subject, jwtService.getExpiryMinutes() - 2);
         Instant expiresAt = Instant.now().plusSeconds(jwtService.getExpiryMinutes() * 60);
         return new LoginResult(newToken, user.getRole(), user.getId(), expiresAt);
     }

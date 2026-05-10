@@ -9,7 +9,14 @@ x-service-defaults: &service-defaults
     postgres:
       condition: service_healthy
 
+x-eureka-defaults: &eureka-service-defaults
+  restart: on-failure
+  depends_on:
+    redis:
+      condition: service_healthy
+
 services:
+  # ── Infrastructure ──────────────────────────────────────────────────────────
   postgres:
     image: postgres:15-alpine
     container_name: farmconnect-postgres
@@ -27,6 +34,55 @@ services:
       timeout: 5s
       retries: 10
 
+  # ── Redis (shared state for token store, caching) ──────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: farmconnect-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - redis_data:/data
+
+  # ── Discovery ───────────────────────────────────────────────────────────────
+  eureka-service:
+    <<: *eureka-service-defaults
+    build:
+      context: ./backend
+      args:
+        MODULE_NAME: eureka-service
+    container_name: farmconnect-eureka
+    ports:
+      - "8761:8761"
+    environment:
+      SERVER_PORT: 8761
+
+  # ── Gateway ─────────────────────────────────────────────────────────────────
+  gateway-service:
+    <<: *service-defaults
+    build:
+      context: ./backend
+      args:
+        MODULE_NAME: gateway-service
+    container_name: farmconnect-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      SERVER_PORT: 8080
+      EUREKA_URI: http://eureka-service:8761
+    depends_on:
+      - eureka-service
+        condition: service_started
+      - postgres
+        condition: service_healthy
+
+  # ── Backend Services ────────────────────────────────────────────────────────
+  # All internal services register with Eureka and are no longer exposed
+  # directly to the host network. Traffic flows through gateway → service.
   identity-service:
     <<: *service-defaults
     build:
@@ -35,12 +91,21 @@ services:
         MODULE_NAME: identity-service
     container_name: farmconnect-identity
     ports:
-      - "8081:8081"
+      - "8081:8081"  # Exposed for debugging/admin; production: remove
     environment:
       <<: *common-env
       SERVER_PORT: 8081
       DB_URL: jdbc:postgresql://postgres:5432/agrichain_identity
       JWT_SECRET: ${JWT_SECRET}
+      REDIS_HOST: redis
+      EUREKA_URI: http://eureka-service:8761
+    depends_on:
+      redis:
+        condition: service_healthy
+      eureka-service:
+        condition: service_started
+    volumes:
+      - farmer_documents:/app/uploads/documents
 
   farmer-service:
     <<: *service-defaults
@@ -49,8 +114,6 @@ services:
       args:
         MODULE_NAME: farmer-service
     container_name: farmconnect-farmer
-    ports:
-      - "8082:8082"
     environment:
       <<: *common-env
       SERVER_PORT: 8082
@@ -59,6 +122,10 @@ services:
       SERVICES_IDENTITY_URL: http://identity-service:8081
       SERVICES_NOTIFICATION_URL: http://notification-service:8088
       DOCUMENT_STORAGE_DIR: /app/uploads/documents
+      EUREKA_URI: http://eureka-service:8761
+    depends_on:
+      eureka-service:
+        condition: service_started
     volumes:
       - farmer_documents:/app/uploads/documents
 
@@ -69,8 +136,6 @@ services:
       args:
         MODULE_NAME: crop-service
     container_name: farmconnect-crop
-    ports:
-      - "8083:8083"
     environment:
       <<: *common-env
       SERVER_PORT: 8083
@@ -79,6 +144,10 @@ services:
       SERVICES_IDENTITY_URL: http://identity-service:8081
       SERVICES_FARMER_URL: http://farmer-service:8082
       SERVICES_NOTIFICATION_URL: http://notification-service:8088
+      EUREKA_URI: http://eureka-service:8761
+    depends_on:
+      eureka-service:
+        condition: service_started
 
   transaction-service:
     <<: *service-defaults
@@ -87,8 +156,6 @@ services:
       args:
         MODULE_NAME: transaction-service
     container_name: farmconnect-transaction
-    ports:
-      - "8084:8084"
     environment:
       <<: *common-env
       SERVER_PORT: 8084
@@ -97,6 +164,10 @@ services:
       SERVICES_IDENTITY_URL: http://identity-service:8081
       SERVICES_FARMER_URL: http://farmer-service:8082
       SERVICES_CROP_URL: http://crop-service:8083
+      EUREKA_URI: http://eureka-service:8761
+    depends_on:
+      eureka-service:
+        condition: service_started
 
   subsidy-service:
     <<: *service-defaults
@@ -105,8 +176,6 @@ services:
       args:
         MODULE_NAME: subsidy-service
     container_name: farmconnect-subsidy
-    ports:
-      - "8085:8085"
     environment:
       <<: *common-env
       SERVER_PORT: 8085
@@ -116,6 +185,10 @@ services:
       SERVICES_FARMER_URL: http://farmer-service:8082
       SERVICES_TRANSACTION_URL: http://transaction-service:8084
       SERVICES_NOTIFICATION_URL: http://notification-service:8088
+      EUREKA_URI: http://eureka-service:8761
+    depends_on:
+      eureka-service:
+        condition: service_started
 
   compliance-service:
     <<: *service-defaults
@@ -124,8 +197,6 @@ services:
       args:
         MODULE_NAME: compliance-service
     container_name: farmconnect-compliance
-    ports:
-      - "8086:8086"
     environment:
       <<: *common-env
       SERVER_PORT: 8086
@@ -134,6 +205,10 @@ services:
       SERVICES_FARMER_URL: http://farmer-service:8082
       SERVICES_TRANSACTION_URL: http://transaction-service:8084
       SERVICES_SUBSIDY_URL: http://subsidy-service:8085
+      EUREKA_URI: http://eureka-service:8761
+    depends_on:
+      eureka-service:
+        condition: service_started
 
   reporting-service:
     <<: *service-defaults
@@ -142,8 +217,6 @@ services:
       args:
         MODULE_NAME: reporting-service
     container_name: farmconnect-reporting
-    ports:
-      - "8087:8087"
     environment:
       <<: *common-env
       SERVER_PORT: 8087
@@ -154,6 +227,10 @@ services:
       SERVICES_TRANSACTION_URL: http://transaction-service:8084
       SERVICES_SUBSIDY_URL: http://subsidy-service:8085
       SERVICES_COMPLIANCE_URL: http://compliance-service:8086
+      EUREKA_URI: http://eureka-service:8761
+    depends_on:
+      eureka-service:
+        condition: service_started
 
   notification-service:
     <<: *service-defaults
@@ -162,14 +239,16 @@ services:
       args:
         MODULE_NAME: notification-service
     container_name: farmconnect-notification
-    ports:
-      - "8088:8088"
     environment:
       <<: *common-env
       SERVER_PORT: 8088
       DB_URL: jdbc:postgresql://postgres:5432/agrichain_notification
       JWT_SECRET: ${JWT_SECRET}
       SERVICES_IDENTITY_URL: http://identity-service:8081
+      EUREKA_URI: http://eureka-service:8761
+    depends_on:
+      eureka-service:
+        condition: service_started
 
   trader-service:
     <<: *service-defaults
@@ -178,8 +257,6 @@ services:
       args:
         MODULE_NAME: trader-service
     container_name: farmconnect-trader
-    ports:
-      - "8089:8089"
     environment:
       <<: *common-env
       SERVER_PORT: 8089
@@ -188,7 +265,12 @@ services:
       SERVICES_IDENTITY_URL: http://identity-service:8081
       SERVICES_CROP_URL: http://crop-service:8083
       SERVICES_NOTIFICATION_URL: http://notification-service:8088
+      EUREKA_URI: http://eureka-service:8761
+    depends_on:
+      eureka-service:
+        condition: service_started
 
+  # ── Frontend ────────────────────────────────────────────────────────────────
   frontend:
     build:
       context: ./frontend
@@ -196,16 +278,9 @@ services:
     ports:
       - "80:80"
     depends_on:
-      - identity-service
-      - farmer-service
-      - crop-service
-      - transaction-service
-      - subsidy-service
-      - compliance-service
-      - reporting-service
-      - notification-service
-      - trader-service
+      - gateway-service
 
 volumes:
   postgres_data:
   farmer_documents:
+  redis_data:
