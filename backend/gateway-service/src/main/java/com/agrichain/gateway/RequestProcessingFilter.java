@@ -29,10 +29,11 @@ public class RequestProcessingFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         // 1. Generate or extract correlation ID
-        String requestId = exchange.getRequest().getHeaders().getFirst("X-Request-Id");
-        if (requestId == null || requestId.isBlank()) {
-            requestId = UUID.randomUUID().toString();
+        String rawRequestId = exchange.getRequest().getHeaders().getFirst("X-Request-Id");
+        if (rawRequestId == null || rawRequestId.isBlank()) {
+            rawRequestId = UUID.randomUUID().toString();
         }
+        final String requestId = rawRequestId;
 
         // 2. Add correlation ID to downstream request
         ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
