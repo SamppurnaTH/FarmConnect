@@ -57,6 +57,7 @@ export interface FarmerDocument {
   verificationStatus: VerificationStatus;
   rejectionReason?: string;
   uploadedAt: string;
+  reviewedAt?: string;
 }
 
 // ─── Crop ────────────────────────────────────────────────────────────────────

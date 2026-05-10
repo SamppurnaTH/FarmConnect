@@ -57,7 +57,7 @@ const TransactionsPage: React.FC = () => {
           setTransactions(txs);
         } else if (role === 'Trader') {
           // Resolve trader profile ID first — getTraderOrders expects profile ID, not identity userId
-          const { tradersApi } = await import('../api/traders');
+          const { tradersApi } = await import('../../api/traders');
           const profile = await tradersApi.getMyProfile();
           const orders = await cropsApi.getTraderOrders(profile.id);
           if (orders.length === 0) {
