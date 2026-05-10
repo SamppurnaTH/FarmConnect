@@ -16,12 +16,13 @@
 
 ---
 
-## 🚀 DevOps & Workflow Status
-We maintain high standards for code quality and reliability. Our development workflow is fully automated:
+## 🚀 Project Overview & Strategy
+We maintain a professional and transparent development process. Explore our strategic and operational documents:
 
-- **Pipeline Status**: [Check GitHub Actions](https://github.com/SamppurnaTH/FarmConnect/actions)
-- **CI/CD Workflow**: [Learn more about our Git Workflow](docs/git-workflow.md)
-- **Documentation**: [Browse detailed Service Docs](docs/services/)
+- **[Product Requirements Document (PRD)](docs/PRD.md)**: Vision, features, and roadmap.
+- **[Git Workflow & CI/CD](docs/git-workflow.md)**: Automated pipelines and quality standards.
+- **[Architecture Deep Dives](docs/services/)**: Technical specifications for individual services.
+- **[Pipeline Status](https://github.com/SamppurnaTH/FarmConnect/actions)**: Real-time build and test results.
 
 ---
 
@@ -78,11 +79,6 @@ cp .env.example .env
 ```bash
 docker-compose up -d --build
 ```
-
-### 3. Access Points
-- **Web Portal**: [http://localhost:80](http://localhost:80)
-- **API Gateway**: [http://localhost:8080](http://localhost:8080)
-- **Swagger UI**: `http://localhost:8080/{service-name}/swagger-ui/index.html`
 
 ---
 
