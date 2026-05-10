@@ -31,21 +31,21 @@
 FarmConnect is built on a **High-Concurrency Microservices Architecture**, ensuring domain isolation, horizontal scalability, and fault tolerance.
 
 ### Service Mesh & Orchestration
-The ecosystem comprises specialized Spring Boot microservices, coordinated via a robust container orchestration layer:
+The ecosystem comprises specialized Spring Boot microservices. Click on a service to view its detailed documentation:
 
-| Domain | Service | Responsibilities |
-| :--- | :--- | :--- |
-| **Edge Gateway** | `gateway-service` | Central Entry Point, Dynamic Routing, Rate Limiting |
-| **Discovery** | `eureka-service` | Service Registration, Heartbeat Monitoring, Load Balancing |
-| **Identity** | `identity-service` | RBAC, JWT Issuance, OAuth2, Audit Logging |
-| **Farmer** | `farmer-service` | Profile Lifecycle, KYC Documents, Land Verification |
-| **Marketplace** | `crop-service` | Inventory Management, Price Indexing, Listing Management |
-| **Commerce** | `transaction-service` | Secure Trade Execution, Settlement, Digital Ledger Entry |
-| **Governance** | `subsidy-service` | Grant Allocation, Eligibility Scoring, Disbursement |
-| **Assurance** | `compliance-service` | Automated Verification, Regulatory Checkpoints |
-| **Intelligence** | `reporting-service` | KPI Dashboards, Market Analytics, PDF/JSON Reports |
-| **Engagement** | `notification-service` | Multi-channel Alerts, Event-driven Status Updates |
-| **Trade Ops** | `trader-service` | Trader Profile Management, Procurement Tracking |
+| Domain | Service | Responsibilities | Documentation |
+| :--- | :--- | :--- | :--- |
+| **Edge Gateway** | `gateway-service` | Central Entry Point, Dynamic Routing | [View Doc](docs/services/core-services.md#gateway-service) |
+| **Discovery** | `eureka-service` | Service Registration, Monitoring | [View Doc](docs/services/core-services.md#eureka-service) |
+| **Identity** | `identity-service` | RBAC, JWT, Audit Logging | [View Doc](docs/services/identity-service.md) |
+| **Farmer** | `farmer-service` | Profile Lifecycle, KYC, Verification | [View Doc](docs/services/farmer-service.md) |
+| **Marketplace** | `crop-service` | Inventory, Listing Management | [View Doc](docs/services/core-services.md#core-microservices-summary) |
+| **Commerce** | `transaction-service` | Trade Execution, Settlement | [View Doc](docs/services/core-services.md#core-microservices-summary) |
+| **Governance** | `subsidy-service` | Grant Allocation, Disbursement | [View Doc](docs/services/core-services.md#core-microservices-summary) |
+| **Assurance** | `compliance-service` | Regulatory Checkpoints | [View Doc](docs/services/core-services.md#core-microservices-summary) |
+| **Intelligence** | `reporting-service` | KPI Dashboards, Analytics | [View Doc](docs/services/core-services.md#core-microservices-summary) |
+| **Engagement** | `notification-service` | Multi-channel Alerts | [View Doc](docs/services/core-services.md#core-microservices-summary) |
+| **Trade Ops** | `trader-service` | Trader & Procurement Tracking | [View Doc](docs/services/core-services.md#core-microservices-summary) |
 
 ---
 
@@ -89,8 +89,6 @@ The ecosystem comprises specialized Spring Boot microservices, coordinated via a
     ```bash
     cd backend
     mvn clean install -DskipTests
-    # Start individual services using:
-    # java -jar <service-name>/target/*.jar
     ```
 
 ### Access Points
@@ -101,8 +99,6 @@ The ecosystem comprises specialized Spring Boot microservices, coordinated via a
 ---
 
 ## 🔑 Demo Credentials
-
-The application comes pre-seeded with demo accounts for testing:
 
 | Role | Username | Password |
 | :--- | :--- | :--- |
@@ -120,7 +116,6 @@ The application comes pre-seeded with demo accounts for testing:
 - [ ] **Blockchain Integration**: Immutable trade tracking via Hyperledger Fabric.
 - [ ] **AI Forecasting**: Predictive algorithms for regional crop yield.
 - [ ] **IoT Connectivity**: Real-time soil and weather telemetry integration.
-- [ ] **Global Reach**: Multi-language support (i18n) for international hubs.
 
 ---
 
