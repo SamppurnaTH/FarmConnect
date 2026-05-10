@@ -52,7 +52,7 @@ const TransactionsPage: React.FC = () => {
             setTransactions([]);
             return;
           }
-          const orderIds = orders.map((o) => o.id);
+          const orderIds = orders.map((o: any) => o.id);
           const txs = await transactionsApi.getTransactionsByOrderIds(orderIds);
           setTransactions(txs);
         } else if (role === 'Trader') {
@@ -64,7 +64,7 @@ const TransactionsPage: React.FC = () => {
             setTransactions([]);
             return;
           }
-          const orderIds = orders.map((o) => o.id);
+          const orderIds = orders.map((o: any) => o.id);
           const txs = await transactionsApi.getTransactionsByOrderIds(orderIds);
           setTransactions(txs);
         } else {
@@ -87,7 +87,7 @@ const TransactionsPage: React.FC = () => {
     const method = paymentState[txId]?.method ?? 'Bank_Transfer';
     try {
       const paymentId = await transactionsApi.submitPayment(txId, { method });
-      setPaymentState((p) => ({
+      setPaymentState((p: any) => ({
         ...p,
         [txId]: { ...p[txId], paymentId, polling: true, status: 'Processing' },
       }));
@@ -99,12 +99,12 @@ const TransactionsPage: React.FC = () => {
   // ── Poll payments in Processing state ─────────────────────────────────────
   usePolling(
     async () => {
-      for (const [txId, state] of Object.entries(paymentState)) {
+      for (const [txId, state] of Object.entries(paymentState) as [string, any][]) {
         if (!state.polling || !state.paymentId) continue;
         try {
           const payment: Payment = await transactionsApi.getPayment(state.paymentId);
           if (payment.status === 'Completed' || payment.status === 'Failed') {
-            setPaymentState((p) => ({
+            setPaymentState((p: any) => ({
               ...p,
               [txId]: {
                 ...p[txId],
@@ -114,8 +114,8 @@ const TransactionsPage: React.FC = () => {
               },
             }));
             if (payment.status === 'Completed') {
-              setTransactions((prev) =>
-                prev.map((t) => (t.id === txId ? { ...t, status: 'Settled' } : t))
+              setTransactions((prev: Transaction[]) =>
+                prev.map((t: Transaction) => (t.id === txId ? { ...t, status: 'Settled' } : t))
               );
               showToast('Payment completed!', 'success');
             } else {
@@ -126,7 +126,7 @@ const TransactionsPage: React.FC = () => {
       }
     },
     10_000,
-    Object.values(paymentState).some((s) => s.polling),
+    Object.values(paymentState).some((s: any) => s.polling),
   );
 
   const statusColor: Record<string, string> = {
@@ -147,7 +147,7 @@ const TransactionsPage: React.FC = () => {
           <div className="card text-center py-12 text-gray-500">No transactions found.</div>
         ) : (
           <div className="space-y-4">
-            {transactions.map((tx) => {
+            {transactions.map((tx: Transaction) => {
               const state = paymentState[tx.id];
               const expired = new Date(tx.expiresAt) <= new Date();
 
@@ -173,8 +173,8 @@ const TransactionsPage: React.FC = () => {
                         <CountdownTimer
                           expiresAt={tx.expiresAt}
                           onExpire={() =>
-                            setTransactions((prev) =>
-                              prev.map((t) =>
+                            setTransactions((prev: Transaction[]) =>
+                              prev.map((t: Transaction) =>
                                 t.id === tx.id ? { ...t, status: 'Cancelled' } : t
                               )
                             )
@@ -206,8 +206,8 @@ const TransactionsPage: React.FC = () => {
                               className="input-field w-auto"
                               aria-label="Payment method"
                               value={state?.method ?? 'Bank_Transfer'}
-                              onChange={(e) =>
-                                setPaymentState((p) => ({
+                              onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                                setPaymentState((p: any) => ({
                                   ...p,
                                   [tx.id]: {
                                     ...p[tx.id],
