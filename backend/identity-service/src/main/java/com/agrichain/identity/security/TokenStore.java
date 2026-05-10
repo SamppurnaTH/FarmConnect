@@ -90,21 +90,20 @@ public class TokenStore {
         // Note: Redis SCAN is used to avoid blocking KEYS in production.
         // This is acceptable for the relatively small token set per user.
         try {
-            redisTemplate.execute((org.springframework.data.redis.core.RedisCallback<Void>) connection -> {
-                byte[] pattern = (KEY_PREFIX + "*").getBytes();
-                connection.scan(new org.springframework.data.redis.core.ScanOptions.ScanOptionsBuilder()
-                        .match(new String(pattern))
-                        .count(100)
-                        .build(),
-                    (cursor) -> {
-                        byte[] key = cursor.getKey();
-                        String storedUsername = new String(redisTemplate.opsForValue().get(key));
-                        if (username.equals(storedUsername)) {
-                            redisTemplate.delete(new String(key));
-                        }
-                    });
-                return null;
-            });
+            org.springframework.data.redis.core.ScanOptions options = org.springframework.data.redis.core.ScanOptions.scanOptions()
+                    .match(KEY_PREFIX + "*")
+                    .count(100)
+                    .build();
+
+            try (org.springframework.data.redis.core.Cursor<String> cursor = redisTemplate.scan(options)) {
+                while (cursor.hasNext()) {
+                    String key = cursor.next();
+                    String storedUsername = redisTemplate.opsForValue().get(key);
+                    if (username.equals(storedUsername)) {
+                        redisTemplate.delete(key);
+                    }
+                }
+            }
         } catch (Exception e) {
             log.error("Failed to bulk-invalidate tokens for user {}: {}", username, e.getMessage());
         }
