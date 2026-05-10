@@ -75,9 +75,9 @@ services:
       SERVER_PORT: 8080
       EUREKA_URI: http://eureka-service:8761
     depends_on:
-      - eureka-service
+      eureka-service:
         condition: service_started
-      - postgres
+      postgres:
         condition: service_healthy
 
   # ── Backend Services ────────────────────────────────────────────────────────

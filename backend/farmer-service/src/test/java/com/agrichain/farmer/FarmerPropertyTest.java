@@ -24,12 +24,13 @@ public class FarmerPropertyTest {
         org.springframework.boot.web.client.RestTemplateBuilder builder = Mockito.mock(org.springframework.boot.web.client.RestTemplateBuilder.class);
         org.springframework.web.client.RestTemplate restTemplate = Mockito.mock(org.springframework.web.client.RestTemplate.class);
         com.agrichain.farmer.repository.FarmerDocumentRepository documentRepository = Mockito.mock(com.agrichain.farmer.repository.FarmerDocumentRepository.class);
+        com.agrichain.farmer.storage.FileStorageService fileStorageService = Mockito.mock(com.agrichain.farmer.storage.FileStorageService.class);
         when(builder.build()).thenReturn(restTemplate);
         
         // Mock Identity Service response
         when(restTemplate.postForObject(any(), any(), any())).thenReturn(UUID.randomUUID());
 
-        this.farmerService = new FarmerService(farmerRepository, documentRepository, builder);
+        this.farmerService = new FarmerService(farmerRepository, documentRepository, fileStorageService, builder);
     }
 
     /**
