@@ -61,18 +61,28 @@ The current agricultural landscape suffers from:
 ## 5. Non-Functional Requirements
 
 ### 5.1 Performance & Scalability
-- **Architecture**: Distributed microservices allowing independent scaling of high-load domains (e.g., Transactions).
-- **Concurrency**: Optimized for high-volume concurrent bids and profile updates.
-- **Caching**: Redis-based caching for frequent lookups (tokens, price indices).
+- **Architecture**: Distributed microservices allowing independent scaling of high-load domains (e.g., Transactions, Marketplace).
+- **Concurrency**: Optimized for high-volume concurrent bids, profile updates, and transaction processing.
+- **Caching**: Redis-based caching for frequent lookups (authentication tokens, service metadata, price indices).
+- **Load Balancing**: Client-side load balancing via Spring Cloud Netflix Ribbon (integrated with Eureka).
+- **Horizontal Scaling**: Services designed to be stateless where possible, enabling horizontal pod autoscaling.
 
 ### 5.2 Security & Resilience
-- **Data Privacy**: AES-256 encryption for all Personally Identifiable Information (PII).
-- **Fault Tolerance**: Resilience4j implementation for Circuit Breakers, Retries, and Rate Limiting.
-- **Infrastructure**: Containerized deployment with Docker for environment parity.
+- **Data Privacy**: AES-256 GCM encryption for all Personally Identifiable Information (PII) at rest.
+- **Network Security**: Zero-trust internal network; only gateway and frontend exposed externally.
+- **Authentication**: Stateless JWT authentication with HTTP-only cookies for frontend, token revocation via Redis.
+- **Authorization**: Fine-grained RBAC with role hierarchy and attribute-based checks where needed.
+- **Fault Tolerance**: Resilience4j implementation for Circuit Breakers, Retries, Rate Limiting, and Bulkheads.
+- **Infrastructure**: Containerized deployment with Docker and Docker Compose for environment parity.
+- **Secrets Management**: Environment-specific configuration via environment variables; no hardcoded secrets.
 
 ### 5.3 Observability
-- **Structured Logging**: Logstash-encoded JSON logs for centralized monitoring.
-- **Discovery**: Eureka-based service registry for dynamic load balancing and failover.
+- **Structured Logging**: Logstash-encoded JSON logs with correlation IDs for distributed tracing.
+- **Metrics**: Micrometer integration with Spring Boot Actuator exposing JVM, HTTP, and business metrics.
+- **Health Checks**: Liveness and readiness probes via Spring Boot Actuator for all backend services.
+- **Discovery**: Eureka-based service registry for dynamic service discovery, load balancing, and failover.
+- **Distributed Tracing**: OpenTelemetry integration for end-to-end request tracing (planned for Phase 2).
+- **Audit Logging**: Immutable audit trails for all sensitive actions (authentication, transactions, subsidy disbursement).
 
 ---
 

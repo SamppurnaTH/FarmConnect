@@ -6,25 +6,28 @@ The **Infrastructure Layer** provides the backbone for service communication, ro
 The entry point for all client traffic (Frontend & External APIs).
 - **Routing**: Dynamic routing based on Eureka service registry.
 - **Security**: Centralized CORS configuration.
-- **Port**: `8080`
+- **Health Checks**: Available at `/actuator/health` (internal only)
+- **Port**: `8080` (only service exposed externally in production)
+- **Communication**: Routes to internal services via Eureka service discovery
 
 ## 🔎 Eureka Service (`eureka-service`)
 The service discovery server.
 - **Registration**: All microservices register their location and health status.
 - **Heartbeats**: Monitors service availability.
-- **Dashboard**: Web UI at `http://localhost:8761`.
-- **Port**: `8761`
+- **Dashboard**: Web UI available internally (not exposed externally)
+- **Port**: `8761` (internal only)
 
 ---
 
 # Core Microservices (Summary)
 
-| Service | Port | Primary Responsibility |
-| :--- | :--- | :--- |
-| `crop-service` | `8083` | Inventory, Price Indexing, Listing Management |
-| `transaction-service` | `8084` | Secure Trade Execution, Settlement |
-| `subsidy-service` | `8085` | Grant Allocation & Disbursement |
-| `compliance-service` | `8086` | Automated Regulatory Checkpoints |
-| `reporting-service` | `8087` | KPI Dashboards & Market Analytics |
-| `notification-service` | `8088` | Multi-channel Alerts (In-App, Email) |
-| `trader-service` | `8089` | Trader Profile & Procurement Tracking |
+All internal microservices communicate through the gateway and are not exposed externally:
+- `crop-service`: Inventory, Price Indexing, Listing Management
+- `transaction-service`: Secure Trade Execution, Settlement
+- `subsidy-service`: Grant Allocation & Disbursement
+- `compliance-service`: Automated Regulatory Checkpoints
+- `reporting-service`: KPI Dashboards & Market Analytics
+- `notification-service`: Multi-channel Alerts (In-App, Email)
+- `trader-service`: Trader Profile & Procurement Tracking
+- `farmer-service`: Profile Lifecycle, KYC, Verification
+- `identity-service`: Security, RBAC, JWT, Audit Logging

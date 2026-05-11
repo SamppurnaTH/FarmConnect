@@ -91,7 +91,6 @@ services:
         MODULE_NAME: identity-service
     container_name: farmconnect-identity
     ports:
-      - "8081:8081"  # Exposed for debugging/admin; production: remove
     environment:
       <<: *common-env
       SERVER_PORT: 8081

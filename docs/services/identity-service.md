@@ -4,10 +4,11 @@ The **Identity Service** is the high-security foundation of the FarmConnect ecos
 
 ## 🔐 Security Architecture
 
-### Stateless Authentication
 Identity Service uses **JSON Web Tokens (JWT)** for session management. When a user logs in, a unique JTI (JWT ID) is generated and stored in **Redis** with a TTL matching the token's expiry.
 - **Logout/Invalidation**: To logout, the JTI is removed from Redis. Any token with a missing JTI is rejected, even if its signature is valid.
 - **Refresh Flow**: To maintain security, tokens are short-lived (e.g., 1 hour). The refresh endpoint allows issuing a new token without re-entering credentials, provided the old token is still valid.
+
+> **Note**: In production, the Identity Service is only accessible internally via the Gateway Service or service discovery. The examples below use relative paths for illustrative purposes.
 
 ### RBAC Model (Roles)
 The system supports the following hierarchical roles:

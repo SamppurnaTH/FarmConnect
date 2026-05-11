@@ -4,12 +4,11 @@ The **Farmer Service** is the primary domain service for managing the 5,000+ far
 
 ## 🌾 Domain Business Logic
 
-### 1. Multi-Step Onboarding
 Farmer registration is a coordinated process between the **Farmer Service** and **Identity Service**:
-1. User submits profile data + credentials.
-2. Farmer Service calls Identity Service to create a `FARMER` account.
+1. User submits profile data + credentials via the Gateway Service.
+2. Farmer Service calls Identity Service (via service discovery) to create a `FARMER` account.
 3. On success, a local `Farmer` profile is created with status `PENDING_VERIFICATION`.
-4. A notification is triggered to the Market Officer for KYC review.
+4. A notification is triggered to the Market Officer via Notification Service (via service discovery).
 
 ### 2. KYC & Document Verification
 Farmers must upload two types of documents:

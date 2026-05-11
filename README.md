@@ -38,19 +38,23 @@ We maintain a professional and transparent development process. Explore our stra
 
 ## 🏗️ Technical Architecture
 
-FarmConnect is built on a **High-Concurrency Microservices Architecture**. Click on a service to view its **detailed technical documentation**:
+FarmConnect is built on a **High-Concurrency Microservices Architecture**. In production, only the gateway-service and frontend are exposed externally. All internal microservices communicate through the gateway via service discovery.
+
+Click on a service to view its **detailed technical documentation**:
 
 | Domain | Service | Responsibilities | Documentation |
 | :--- | :--- | :--- | :--- |
-| **Edge Gateway** | `gateway-service` | Central Entry Point, Dynamic Routing | [View Doc](docs/services/core-services.md#gateway-service) |
-| **Discovery** | `eureka-service` | Service Registration, Monitoring | [View Doc](docs/services/core-services.md#eureka-service) |
-| **Identity** | `identity-service` | Security, RBAC, JWT, Audit Logging | [Read Deep Dive](docs/services/identity-service.md) |
-| **Farmer** | `farmer-service` | Profile Lifecycle, KYC, Verification | [Read Deep Dive](docs/services/farmer-service.md) |
-| **Marketplace** | `crop-service` | Inventory, Listing Management | [View Summary](docs/services/core-services.md) |
-| **Commerce** | `transaction-service` | Trade Execution, Settlement | [View Summary](docs/services/core-services.md) |
-| **Governance** | `subsidy-service` | Grant Allocation, Disbursement | [View Summary](docs/services/core-services.md) |
-| **Assurance** | `compliance-service` | Regulatory Checkpoints | [View Summary](docs/services/core-services.md) |
-| **Intelligence** | `reporting-service` | KPI Dashboards, Analytics | [View Summary](docs/services/core-services.md) |
+| **Edge Gateway** | `gateway-service` | Central Entry Point, Dynamic Routing, Rate Limiting | [View Doc](docs/services/core-services.md#gateway-service) |
+| **Discovery** | `eureka-service` | Service Registration, Health Monitoring, Load Balancing | [View Doc](docs/services/core-services.md#eureka-service) |
+| **Identity** | `identity-service` | Security, RBAC, JWT, Audit Logging, Session Management | [Read Deep Dive](docs/services/identity-service.md) |
+| **Farmer** | `farmer-service` | Profile Lifecycle, KYC, Verification, Document Management | [Read Deep Dive](docs/services/farmer-service.md) |
+| **Marketplace** | `crop-service` | Inventory, Listing Management, Price Indexing | [View Summary](docs/services/core-services.md) |
+| **Commerce** | `transaction-service` | Trade Execution, Settlement, Payment Processing | [View Summary](docs/services/core-services.md) |
+| **Governance** | `subsidy-service` | Grant Allocation, Disbursement, Eligibility Verification | [View Summary](docs/services/core-services.md) |
+| **Assurance** | `compliance-service` | Regulatory Checkpoints, Audit Trails, Compliance Reporting | [View Summary](docs/services/core-services.md) |
+| **Intelligence** | `reporting-service` | KPI Dashboards, Market Analytics, Business Intelligence | [View Summary](docs/services/core-services.md) |
+| **Notification** | `notification-service` | Multi-channel Alerts (In-App, Email, SMS), Template Management | [View Summary](docs/services/core-services.md) |
+| **Trader** | `trader-service` | Trader Profile, Procurement Tracking, Bid Management | [View Summary](docs/services/core-services.md) |
 
 ---
 
@@ -82,17 +86,6 @@ docker-compose up -d --build
 
 ---
 
-## 🔑 Demo Accounts
-
-| Role | Username | Password |
-| :--- | :--- | :--- |
-| **Administrator** | `admin_demo` | `Admin@1234` |
-| **Farmer** | `farmer_demo` | `Farm@1234` |
-| **Trader** | `trader_demo` | `Trade@1234` |
-| **Market Officer** | `officer_demo` | `Officer@1234` |
-| **Compliance Officer** | `compliance_demo` | `Comp@1234` |
-| **Government Auditor** | `auditor_demo` | `Audit@1234` |
-| **Program Manager** | `manager_demo` | `Manager@1234` |
 
 ---
 
